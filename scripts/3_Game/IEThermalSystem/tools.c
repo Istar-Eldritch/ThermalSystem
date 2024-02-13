@@ -1,3 +1,5 @@
+const int IE_COLOR_ICE = 0xffACC8E5;
+
 int IEGetTemperatureColor( int temperature )
 {
 	int alpha = 128;
@@ -6,7 +8,7 @@ int IEGetTemperatureColor( int temperature )
 	int blue = 153;
     if (temperature < 0)
     {
-        return 0xffACC8E5;
+        return IE_COLOR_ICE;
     }
 	else if ( temperature < 20 )
 	{

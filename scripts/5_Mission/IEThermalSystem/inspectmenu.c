@@ -46,7 +46,7 @@ modded class InspectMenuNew
 			{
 				case LIQUID_WATER:
 				{
-					if (temperature < 0) WidgetTrySetText(root_widget, "ItemLiquidTypeWidget", "ICE", Colors.COLOR_LIQUID);
+					if (temperature < 0) WidgetTrySetText(root_widget, "ItemLiquidTypeWidget", "ICE", IE_COLOR_ICE);
 					else WidgetTrySetText(root_widget, "ItemLiquidTypeWidget", "#inv_inspect_water", Colors.COLOR_LIQUID);
 					break;
 				}

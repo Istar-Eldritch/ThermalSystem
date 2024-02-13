@@ -38,15 +38,32 @@ class CfgMods {
 
 class CfgVehicles {
   class Inventory_Base;
+  class Bottle_Base;
   class Edible_Base: Inventory_Base
-	{
+  {
 		scope=2;
-    varTemperatureMin=-273;
+    	varTemperatureMin=-273;
 		inventorySlot[]=
 		{
 			"DirectCookingA",
 			"DirectCookingB",
 			"DirectCookingC"
 		};
-  }
-}
+  };
+
+  class WaterBottle: Bottle_Base
+  {
+		scope=2;
+    	varTemperatureMax=100;
+  };
+  class Canteen: Bottle_Base
+  {
+		scope=2;
+    	varTemperatureMax=100;
+  };
+  class WaterPouch_ColorBase: Bottle_Base
+  {
+		scope=2;
+    	varTemperatureMax=100;
+  };
+};
