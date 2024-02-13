@@ -55,7 +55,7 @@ modded class Environment
     override override void ApplyWetnessToItem(ItemBase pItem)
     {
         super.ApplyWetnessToItem(pItem);
-        if (pItem && pItem.IsTemperatureVisible())
+        if (pItem && pItem.IECanHaveTemperature())
         {
             ItemBase parentItem;
 			bool isParentWet 			= false;
@@ -86,12 +86,12 @@ modded class Environment
                 float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER * pItem.GetSoakingIncrement("wetParent"));
                 // Cancel the temperature added by the vanilla impl.
                 pItem.AddTemperature(diffTemp);
-                if (parentItem.IsTemperatureVisible()) {
+                if (parentItem.IECanHaveTemperature()) {
                     float distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
                     if (distanceTemp < diffTemp)
                         diffTemp = distanceTemp;
 
-                    if (diffTemp > parentItem.GetTemperature())
+                    if (pItem.GetTemperature() > parentItem.GetTemperature())
                         diffTemp = diffTemp * -1;
                 }
                 else
@@ -100,7 +100,7 @@ modded class Environment
                     if (distanceTemp < diffTemp)
                         diffTemp = distanceTemp;
 
-                    if (diffTemp > PlayerConstants.NORMAL_TEMPERATURE_H)
+                    if (pItem.GetTemperature() > PlayerConstants.NORMAL_TEMPERATURE_H)
                         diffTemp = diffTemp * -1;
                 }
                 if (Math.AbsFloat(diffTemp) > 1)
@@ -112,7 +112,7 @@ modded class Environment
 	override protected void ApplyDrynessToItemEx(ItemBase pItem, EnvironmentDrynessData pDrynessData)
 	{
         super.ApplyDrynessToItemEx(pItem, pDrynessData);
-		if (pItem && pItem.IsTemperatureVisible())
+		if (pItem && pItem.IECanHaveTemperature())
 		{	
 			ItemBase parentItem;
 			bool isParentWet 			= false;
@@ -142,13 +142,13 @@ modded class Environment
 			{
                 diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
 				pItem.AddTemperature(diffTemp);
-                if (parentItem.IsTemperatureVisible())
+                if (parentItem.IECanHaveTemperature())
                 {
                     distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
                     if (distanceTemp < diffTemp)
                         diffTemp = distanceTemp;
 
-                    if (diffTemp > parentItem.GetTemperature())
+                    if (pItem.GetTemperature() > parentItem.GetTemperature())
                         diffTemp = diffTemp * -1;
                 }
                 else
@@ -157,7 +157,7 @@ modded class Environment
                     if (distanceTemp < diffTemp)
                         diffTemp = distanceTemp;
 
-                    if (diffTemp > PlayerConstants.NORMAL_TEMPERATURE_H)
+                    if (pItem.GetTemperature() > PlayerConstants.NORMAL_TEMPERATURE_H)
                         diffTemp = diffTemp * -1;
                 }
 

@@ -4,7 +4,7 @@ modded class InspectMenuNew
 	{
 		if ( item.IsInherited( ZombieBase ) || item.IsInherited( Car ) ) return;
 		ItemBase item_base = ItemBase.Cast( item );
-		if( item_base && item_base.IsTemperatureVisible() )
+		if( item_base != null && item_base.IsTemperatureVisible() )
 		{
 			float temperature = Math.Round(item_base.GetTemperature());
             

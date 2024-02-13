@@ -1,7 +1,11 @@
 modded class ItemBase
 {
     bool IsTemperatureVisible() {
-        return CanHaveTemperature() && GetTemperature() > 30;
+        return IECanHaveTemperature() && (GetTemperature() > 40 || GetTemperature() < 18);
+    }
+
+    bool IECanHaveTemperature() {
+        return CanHaveTemperature();
     }
 	
 	override void InitItemVariables()
@@ -42,7 +46,7 @@ modded class ItemBase
 	
 				// #TODO Warm or cool player
 			}
-			else if (refParentIB && refParentIB.IsTemperatureVisible())
+			else if (refParentIB && refParentIB.IECanHaveTemperature())
 			{
 				tempDiff = Math.AbsFloat(delta * GameConstants.TEMPERATURE_RATE_COOLING_INSIDE);
 				tempDistance = Math.AbsFloat(GetTemperature() - refParentIB.GetTemperature());
