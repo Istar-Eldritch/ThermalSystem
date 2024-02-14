@@ -1,0 +1,16 @@
+MetaFileClass {
+ Name "{485571EB54588614}IE/ThermalSystem/assets/snowflake.edds"
+ Author "desktop-c2tqomk"
+ ChangeDate -678088626
+ Configurations {
+  PAAResourceClass PC {
+   SourceFile "snowflake.paa"
+  }
+  PAAResourceClass XBOX_ONE : PC {
+  }
+  PAAResourceClass PS4 : PC {
+  }
+  PAAResourceClass LINUX : PC {
+  }
+ }
+}

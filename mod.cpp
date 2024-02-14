@@ -1,7 +1,7 @@
 name = "IEThermalSystem";
-logoSmall =  "IE/ThermalSystem/assets/textures/iestress_logo.paa";
-logo = "IE/ThermalSystem/assets/textures/iestress_logo.paa";
-logoOver = "IE/ThermalSystem/assets/textures/iestress_logo.paa";
+logoSmall =  "IE/ThermalSystem/assets/images/iethermalsystemlogo.paa";
+logo = "IE/ThermalSystem/assets/images/iethermalsystemlogo.paa";
+logoOver = "IE/ThermalSystem/assets/images/iethermalsystemlogo.paa";
 tooltip = "IEThermalSystem";
 overview = "Frozen foods";
 author = "Istar-Eldritch";

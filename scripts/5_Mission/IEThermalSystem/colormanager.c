@@ -9,20 +9,23 @@ modded class ColorManager
 		if ( dragged_item )
 			return 0;
 		
-		// if item icon is main icon (view, viewgrid )
-		if ( item.GetHierarchyParent() && item.GetHierarchyParent() != player )
-		{
-			color = -1;
-		}
+        if (item)
+        {
+            // if item icon is main icon (view, viewgrid )
+            if ( item.GetHierarchyParent() && item.GetHierarchyParent() != player )
+            {
+                color = -1;
+            }
 
-		if ( item != null && item.IsTemperatureVisible()) 
-		{
-			float temperature = item.GetTemperature();
-			if ( temperature )
-			{
-				color = IEGetTemperatureColor( temperature );
-			}
-		}
+            if ( item.IsTemperatureVisible()) 
+            {
+                float temperature = item.GetTemperature();
+                if ( temperature )
+                {
+                    color = IEGetTemperatureColor( temperature );
+                }
+            }
+        }
 		return color;
 	}
 }
