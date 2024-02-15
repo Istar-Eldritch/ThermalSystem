@@ -1,23 +1,25 @@
 modded class ItemBase
 {
-    bool IsTemperatureVisible() {
-        return IECanHaveTemperature() && (GetTemperature() > 40 || GetTemperature() < 18);
-    }
+	bool IsTemperatureVisible()
+	{
+		return IECanHaveTemperature() && (GetTemperature() > 40 || GetTemperature() < 20);
+	}
 
-    bool IECanHaveTemperature() {
-        return CanHaveTemperature();
-    }
-	
+	bool IECanHaveTemperature()
+	{
+		return CanHaveTemperature();
+	}
+
 	override void InitItemVariables()
 	{
 		super.InitItemVariables();
-		
+
 		if (CanHaveTemperature())
 		{
 			Mission mission = GetGame().GetMission();
 			if (mission && mission.GetWorldData())
 			{
-				SetTemperature( mission.GetWorldData().GetBaseEnvTemperature() );
+				SetTemperature(mission.GetWorldData().GetBaseEnvTemperature());
 			}
 		}
 	}
@@ -34,28 +36,32 @@ modded class ItemBase
 				tempDiff = Math.AbsFloat(delta * GameConstants.TEMPERATURE_RATE_COOLING_INSIDE);
 				float playerTemp = PlayerConstants.NORMAL_TEMPERATURE_H;
 				tempDistance = Math.AbsFloat(GetTemperature() - PlayerConstants.NORMAL_TEMPERATURE_H);
-				if (tempDiff > tempDistance) {
+				if (tempDiff > tempDistance)
+				{
 					tempDiff = tempDistance;
 				}
-				if (GetTemperature() > PlayerConstants.NORMAL_TEMPERATURE_H) {
+				if (GetTemperature() > PlayerConstants.NORMAL_TEMPERATURE_H)
+				{
 					tempDiff = tempDiff * -1;
 				}
-				
+
 				if (Math.AbsFloat(tempDiff) > 1)
 					AddTemperature(tempDiff);
-	
+
 				// #TODO Warm or cool player
 			}
 			else if (refParentIB && refParentIB.IECanHaveTemperature())
 			{
 				tempDiff = Math.AbsFloat(delta * GameConstants.TEMPERATURE_RATE_COOLING_INSIDE);
 				tempDistance = Math.AbsFloat(GetTemperature() - refParentIB.GetTemperature());
-				if (tempDiff * 2 > tempDistance) {
+				if (tempDiff * 2 > tempDistance)
+				{
 					tempDiff = tempDistance / 2;
 				}
 				// balance temperatures of items containing each other
 				// TODO: Take into consideration mass of the item.
-				if (GetTemperature() > refParentIB.GetTemperature()) {
+				if (GetTemperature() > refParentIB.GetTemperature())
+				{
 					// Warm the parent and cool the child or warm the child and cool the parent
 					tempDiff = tempDiff * -1;
 				}
@@ -67,7 +73,7 @@ modded class ItemBase
 			else if (refParentIB)
 			{
 				tempDiff = Math.AbsFloat(delta * GameConstants.TEMPERATURE_RATE_COOLING_INSIDE);
-				tempDistance =  Math.AbsFloat(GetTemperature() - envTemp);
+				tempDistance = Math.AbsFloat(GetTemperature() - envTemp);
 				if (tempDiff > tempDistance)
 					tempDiff = tempDistance;
 				if (GetTemperature() > envTemp)
@@ -81,7 +87,7 @@ modded class ItemBase
 				tempDistance = Math.AbsFloat(GetTemperature() - envTemp);
 				if (tempDiff > tempDistance)
 					tempDiff = tempDistance;
-				
+
 				if (GetTemperature() > envTemp)
 					tempDiff = tempDiff * -1;
 				// cooling of an item on ground or inside non-itembase (car, ...)
