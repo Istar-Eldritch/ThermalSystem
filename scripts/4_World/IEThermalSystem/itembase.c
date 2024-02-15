@@ -31,26 +31,7 @@ modded class ItemBase
 		float tempDistance = 0;
 		if (!hasRootAsPlayer && !IsFireplace())
 		{
-			if (hasRootAsPlayer)
-			{
-				tempDiff = Math.AbsFloat(delta * GameConstants.TEMPERATURE_RATE_COOLING_INSIDE);
-				float playerTemp = PlayerConstants.NORMAL_TEMPERATURE_H;
-				tempDistance = Math.AbsFloat(GetTemperature() - PlayerConstants.NORMAL_TEMPERATURE_H);
-				if (tempDiff > tempDistance)
-				{
-					tempDiff = tempDistance;
-				}
-				if (GetTemperature() > PlayerConstants.NORMAL_TEMPERATURE_H)
-				{
-					tempDiff = tempDiff * -1;
-				}
-
-				if (Math.AbsFloat(tempDiff) > 1)
-					AddTemperature(tempDiff);
-
-				// #TODO Warm or cool player
-			}
-			else if (refParentIB && refParentIB.IECanHaveTemperature())
+			if (refParentIB && refParentIB.IECanHaveTemperature())
 			{
 				tempDiff = Math.AbsFloat(delta * GameConstants.TEMPERATURE_RATE_COOLING_INSIDE);
 				tempDistance = Math.AbsFloat(GetTemperature() - refParentIB.GetTemperature());

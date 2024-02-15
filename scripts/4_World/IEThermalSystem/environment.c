@@ -158,7 +158,7 @@ modded class Environment
 			{
 				diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
 				pItem.AddTemperature(diffTemp);
-				if (parentItem.IECanHaveTemperature()) // Parent
+				if (parentItem != null && parentItem.IECanHaveTemperature()) // Parent
 				{
 					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
 					if (distanceTemp < diffTemp)
