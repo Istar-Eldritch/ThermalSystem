@@ -28,7 +28,6 @@ modded class ItemActionsWidget
         int quantityMax = -1;
         float quantityCurrent = -1.0;
 
-        m_IEActionFrozen.Show(false);
         // item health
         health = GetItemHealth();
         SetItemHealth(health, "ia_item", "ia_item_health_mark", m_HealthEnabled);
@@ -69,8 +68,7 @@ modded class ItemActionsWidget
         SetMultipleContinuousItemAction("ia_continuous_mlt_wrapper");
     }
 
-protected
-    void SetActionWidget(ActionBase action, string descText, string actionWidget, string descWidget, string actionIconWidget)
+    protected void SetActionWidget(ActionBase action, string descText, string actionWidget, string descWidget, string actionIconWidget)
     {
         Widget widget = m_Root.FindAnyWidget(actionWidget);
 
@@ -91,8 +89,6 @@ protected
                 if (isBlocked)
                 {
                     action.GetBlockedText(m_Player, null, ItemBase.Cast(m_EntityInHands));
-                    actionIcon.Show(false);
-
                     actionName.SetText(action.GetBlockedText(m_Player, null, ItemBase.Cast(m_EntityInHands)));
                     string blockedIconId = action.GetBlockedIcon(m_Player, null, ItemBase.Cast(m_EntityInHands));
                     Widget blockedIconWidget = actionIcon.GetParent().FindAnyWidget(blockedIconId);
@@ -107,11 +103,14 @@ protected
                         actionIcon.GetScreenSize(width, height);
                         blockedIconWidget.SetScreenSize(width, height);
                         blockedIconWidget.Show(true);
+						actionIcon.Show(false);
+
                     }
                 }
                 else
                 {
                     actionIcon.Show(true);
+					m_IEActionFrozen.Show(false);
                     actionName.SetText(descText);
                 }
             }
@@ -120,6 +119,7 @@ protected
         }
         else
         {
+			m_IEActionFrozen.Show(false);
             widget.Show(false);
         }
     }
