@@ -15,6 +15,11 @@ modded class ActionBase
         return "";
     }
 
+    override bool Post_SetupAction( ActionData action_data )
+	{
+		return !IsBlocked(action_data.m_Player, action_data.m_Target, action_data.m_MainItem);
+	}
+
 	override bool Can( PlayerBase player, ActionTarget target, ItemBase item, int condition_mask )
 	{
 		if ( ( (condition_mask & m_ConditionMask) != condition_mask ) || ( !IsFullBody(player) && !player.IsPlayerInStance(GetStanceMask(player)) ) || player.IsRolling() )

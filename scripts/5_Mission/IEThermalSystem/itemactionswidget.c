@@ -15,7 +15,7 @@ modded class ItemActionsWidget
 		foreach(string action: actionTypes)
 		{
 			Widget existingIcon = m_Root.FindAnyWidget(action + "_btn_icon");
-			m_IEActionFrozen = GetGame().GetWorkspace().CreateWidgets("IE/ThermalSystem/assets/layouts/ie_thermalsystem_snowflake_icon.layout", existingIcon.GetParent());
+			m_IEActionFrozen = ImageWidget.Cast(GetGame().GetWorkspace().CreateWidgets("IE/ThermalSystem/assets/layouts/ie_thermalsystem_snowflake_icon.layout", existingIcon.GetParent()));
 			m_IEActionFrozen.Show(false);
 		}
 
