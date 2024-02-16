@@ -326,10 +326,13 @@ modded class Environment
 						}
 
 						pHeatComfort += heatIsoMult * MiscGameplayFunctions.GetCurrentItemHeatIsolation(item);
-						
+						if (item.IECanHaveTemperature())
+						{
+							pHeat += ItemTempToCoef(item.GetTemperature());
+						}
 						// go through any attachments and cargo (only current level, ignore nested containers - they isolate)
 						int inAttCount = item.GetInventory().AttachmentCount();
-						if (inAttCount > 0)
+						if (inAttCount > 0 && attachmentSlot != InventorySlots.BACK)
 						{
 							for (int inAttIdx = 0; inAttIdx < inAttCount; inAttIdx++)
 							{

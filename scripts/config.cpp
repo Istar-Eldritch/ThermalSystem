@@ -53,6 +53,13 @@ class CfgVehicles {
 		};
   };
 
+  class Clothing: Inventory_Base
+  {
+		scope=2;
+    	varTemperatureMin=-273;
+		varTemperatureMax=100;
+  }
+
   class WaterBottle: Bottle_Base
   {
 		scope=2;
