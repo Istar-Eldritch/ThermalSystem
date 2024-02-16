@@ -136,8 +136,7 @@ modded class Environment
 					if (pItem.GetTemperature() > GameConstants.ENVIRO_PLAYER_COMFORT_TEMP)
 						diffTemp = diffTemp * -1;
 				}
-				if (Math.AbsFloat(diffTemp) > 1)
-					pItem.SetTemperature(diffTemp);
+				pItem.SetTemperature(diffTemp);
 			}
 		}
 	}
@@ -179,7 +178,6 @@ modded class Environment
 			if (!isParentWet && !parentContainsLiquid)
 			{
 				diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
-				pItem.AddTemperature(diffTemp);
 				if (parentILoc.GetSlot() == InventorySlots.BACK) // Items carried on the back shall aproach ambient temperature
 				{
 					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
@@ -198,7 +196,6 @@ modded class Environment
 					if (pItem.GetTemperature() > parentItem.GetTemperature())
 						diffTemp = diffTemp * -1;
 				}
-				// TODO: Add an option for this.
 				else
 				{
 					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GameConstants.ENVIRO_PLAYER_COMFORT_TEMP);
@@ -209,19 +206,6 @@ modded class Environment
 						diffTemp = diffTemp * -1;
 				}
 
-				if (Math.AbsFloat(diffTemp) > 1)
-					pItem.AddTemperature(diffTemp);
-			}
-
-			if (parentContainsLiquid)
-			{
-				diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
-				pItem.AddTemperature(diffTemp);
-			}
-
-			if (isParentWet)
-			{
-				diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER * 3.5);
 				pItem.AddTemperature(diffTemp);
 			}
 		}
