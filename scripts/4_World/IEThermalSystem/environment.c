@@ -74,9 +74,11 @@ modded class Environment
 
 	override override void ApplyWetnessToItem(ItemBase pItem)
 	{
-		super.ApplyWetnessToItem(pItem);
 		if (pItem && pItem.IECanHaveTemperature())
 		{
+			float beforeTemperature = pItem.GetTemperature();
+			super.ApplyWetnessToItem(pItem);
+			pItem.SetTemperature(beforeTemperature);
 			ItemBase parentItem;
 			bool isParentWet = false;
 			bool parentContainsLiquid = false;
@@ -107,8 +109,6 @@ modded class Environment
 			{
 				float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER * pItem.GetSoakingIncrement("wetParent")); // used when decreasing temperature
 				float distanceTemp;
-				// Cancel the temperature added by the vanilla impl.
-				pItem.AddTemperature(diffTemp);
 				if (parentILoc.GetSlot() == InventorySlots.BACK) // Items carried on the back shall aproach ambient temperature
 				{
 					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
@@ -137,7 +137,7 @@ modded class Environment
 						diffTemp = diffTemp * -1;
 				}
 				if (Math.AbsFloat(diffTemp) > 1)
-					pItem.AddTemperature(diffTemp);
+					pItem.SetTemperature(diffTemp);
 			}
 		}
 	}
@@ -147,6 +147,9 @@ modded class Environment
 		super.ApplyDrynessToItemEx(pItem, pDrynessData);
 		if (pItem && pItem.IECanHaveTemperature())
 		{
+			float beforeTemperature = pItem.GetTemperature();
+			super.ApplyWetnessToItem(pItem);
+			pItem.SetTemperature(beforeTemperature);
 			ItemBase parentItem;
 			bool isParentWet = false;
 			bool parentContainsLiquid = false;
