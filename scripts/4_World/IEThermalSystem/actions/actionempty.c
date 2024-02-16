@@ -1,16 +1,14 @@
 
-modded class ActionConsume
+modded class ActionEmptyBottleBase
 {
-
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        Edible_Base edible = Edible_Base.Cast(item);
-        return edible.IECanHaveTemperature() && edible.GetTemperature() < 0 && !edible.CanBeConsumedFrozen();
+        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER;
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return "Can't consume while frozen";
+        return "Can't empty while frozen";
     }
 
     override string GetBlockedIcon(PlayerBase player, ActionTarget target, ItemBase item)

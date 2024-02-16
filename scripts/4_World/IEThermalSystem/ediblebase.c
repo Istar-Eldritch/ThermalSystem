@@ -8,6 +8,6 @@ modded class Edible_Base : ItemBase
 
     bool CanBeConsumedFrozen()
     {
-        return false;
+        return IsLiquidContainer() && IsLiquidPresent() && GetLiquidType() != LIQUID_WATER;
     }
 }

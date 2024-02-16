@@ -104,7 +104,6 @@ modded class ItemActionsWidget
                         blockedIconWidget.SetScreenSize(width, height);
                         blockedIconWidget.Show(true);
 						actionIcon.Show(false);
-
                     }
                 }
                 else
