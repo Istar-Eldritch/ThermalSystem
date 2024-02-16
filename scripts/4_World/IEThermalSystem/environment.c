@@ -19,6 +19,8 @@ modded class Environment
 		float temperature;
 		temperature = g_Game.GetMission().GetWorldData().GetBaseEnvTemperature();
 		temperature += Math.AbsFloat(temperature * m_Clouds * GameConstants.ENVIRO_CLOUDS_TEMP_EFFECT);
+		float player_comfort_temp_low = GetThermalSystemConfig().environment.player_comfort_temp_low;
+		float player_comfort_temp_hi = GetThermalSystemConfig().environment.player_comfort_temp_hi;
 
 		if (IsWaterContact())
 		{
@@ -27,23 +29,23 @@ modded class Environment
 
 		if (IsInsideBuilding() || m_IsUnderRoofBuilding)
 		{
-			if (temperature < 20)
+			if (temperature < player_comfort_temp_low)
 				temperature += Math.AbsFloat(temperature * GameConstants.ENVIRO_TEMPERATURE_INSIDE_COEF);
-			if (temperature > 40)
+			if (temperature > player_comfort_temp_hi)
 				temperature -= Math.AbsFloat(temperature * GameConstants.ENVIRO_TEMPERATURE_INSIDE_COEF);
 		}
 		else if (IsInsideVehicle())
 		{
-			if (temperature < 20)
+			if (temperature < player_comfort_temp_low)
 				temperature += Math.AbsFloat(temperature * GameConstants.ENVIRO_TEMPERATURE_INSIDE_VEHICLE_COEF);
-			if (temperature > 40)
+			if (temperature > player_comfort_temp_hi)
 				temperature -= Math.AbsFloat(temperature * GameConstants.ENVIRO_TEMPERATURE_INSIDE_VEHICLE_COEF);
 		}
 		else if (IsUnderRoof() && !m_IsUnderRoofBuilding)
 		{
-			if (temperature < 20)
+			if (temperature < player_comfort_temp_low)
 				temperature += Math.AbsFloat(temperature * GameConstants.ENVIRO_TEMPERATURE_UNDERROOF_COEF);
-			if (temperature > 40)
+			if (temperature > player_comfort_temp_hi)
 				temperature -= Math.AbsFloat(temperature * GameConstants.ENVIRO_TEMPERATURE_UNDERROOF_COEF);
 
 			temperature -= GameConstants.ENVIRO_TEMPERATURE_WIND_COEF * GetWindModifierPerSurface() * m_Wind;
@@ -368,9 +370,12 @@ modded class Environment
 	
 	protected float ItemTempToCoef(float pTemp)
 	{
-		if (pTemp > GameConstants.ENVIRO_PLAYER_COMFORT_TEMP - 5 && pTemp < GameConstants.ENVIRO_PLAYER_COMFORT_TEMP + 5)
+		float player_comfort_temp_low = GetThermalSystemConfig().environment.player_comfort_temp_low;
+		float player_comfort_temp_hi = GetThermalSystemConfig().environment.player_comfort_temp_hi;
+		float item_temp_effect_on_player = GetThermalSystemConfig().environment.item_temp_effect_on_player;
+		if (pTemp > player_comfort_temp_low && pTemp < player_comfort_temp_hi)
 			return 0;
-		float coef = (pTemp - GameConstants.ENVIRO_PLAYER_COMFORT_TEMP) / GameConstants.ENVIRO_TEMP_EFFECT_ON_PLAYER;
+		float coef = (pTemp - GameConstants.ENVIRO_PLAYER_COMFORT_TEMP) / item_temp_effect_on_player;
 		if (coef > 1)
 			return 1;
 		if (coef < -1)

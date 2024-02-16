@@ -6,7 +6,7 @@ class FreezableWater : LiquidDetailsBase
         if (item)
         {
             int temperature = item.GetTemperature();
-            if (temperature < 0)
+            if (temperature < 0 && GetThermalSystemConfig().water_freezes)
             {
                 return "ICE";
             }
@@ -19,7 +19,7 @@ class FreezableWater : LiquidDetailsBase
         if (item)
         {
             int temperature = item.GetTemperature();
-            if (temperature < 0)
+            if (temperature < 0 && GetThermalSystemConfig().water_freezes)
             {
                 return IE_COLOR_ICE;
             }
@@ -27,13 +27,21 @@ class FreezableWater : LiquidDetailsBase
         return Colors.COLOR_LIQUID;
     }
 }
+#endif
+
 
 modded class MissionBase
 {
     void MissionBase()
     {
-        auto registry = GetLiquidFrameworkRegistry();
-        registry.RegisterLiquid(LIQUID_WATER, new FreezableWater(), true);
+        #ifdef rag_liquid_framework
+            auto registry = GetLiquidFrameworkRegistry();
+            registry.RegisterLiquid(LIQUID_WATER, new FreezableWater(), true);
+        #endif
+        IE_ThermalSystemConfigLoader loader = GetThermalSystemConfigLoader();
+        GetRPCManager().AddRPC("IE_ThermalSystem", "RequestConfigurationRPC", loader, SingleplayerExecutionType.Both);
+        if (GetGame().IsClient()) {
+            loader.RequestConfiguration();
+        }
     }
 }
-#endif

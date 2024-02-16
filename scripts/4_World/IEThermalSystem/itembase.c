@@ -2,7 +2,9 @@ modded class ItemBase
 {
 	bool IsTemperatureVisible()
 	{
-		return IECanHaveTemperature() && (GetTemperature() > GameConstants.ENVIRO_PLAYER_COMFORT_TEMP + 5 || GetTemperature() < GameConstants.ENVIRO_PLAYER_COMFORT_TEMP - 5 );
+		float player_comfort_temp_low = GetThermalSystemConfig().environment.player_comfort_temp_low;
+		float player_comfort_temp_hi = GetThermalSystemConfig().environment.player_comfort_temp_hi;
+		return IECanHaveTemperature() && (GetTemperature() < player_comfort_temp_low || GetTemperature() > player_comfort_temp_hi );
 	}
 
 	bool IECanHaveTemperature()
