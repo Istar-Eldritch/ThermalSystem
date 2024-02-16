@@ -8,7 +8,7 @@ modded class Edible_Base : ItemBase
 
     bool CanBeConsumedFrozen()
     {
-        bool canConsumeIfLiquid = IsLiquidContainer() && IsLiquidPresent() && !(GetLiquidType() == LIQUID_WATER && GetThermalSystemConfig().water_freezes)
+        bool canConsumeIfLiquid = IsLiquidContainer() && IsLiquidPresent() && !(GetLiquidType() == LIQUID_WATER && GetThermalSystemConfig().water_freezes);
         return canConsumeIfLiquid || GetThermalSystemConfig().can_consume_frozen_edibles;
     }
 }
