@@ -74,10 +74,10 @@ modded class Environment
 
 	override override void ApplyWetnessToItem(ItemBase pItem)
 	{
+		float beforeTemperature = pItem.GetTemperature();
+		super.ApplyWetnessToItem(pItem);
 		if (pItem && pItem.IECanHaveTemperature())
 		{
-			float beforeTemperature = pItem.GetTemperature();
-			super.ApplyWetnessToItem(pItem);
 			pItem.SetTemperature(beforeTemperature);
 			ItemBase parentItem;
 			bool isParentWet = false;
@@ -144,11 +144,10 @@ modded class Environment
 
 	override protected void ApplyDrynessToItemEx(ItemBase pItem, EnvironmentDrynessData pDrynessData)
 	{
+		float beforeTemperature = pItem.GetTemperature();
 		super.ApplyDrynessToItemEx(pItem, pDrynessData);
 		if (pItem && pItem.IECanHaveTemperature())
 		{
-			float beforeTemperature = pItem.GetTemperature();
-			super.ApplyWetnessToItem(pItem);
 			pItem.SetTemperature(beforeTemperature);
 			ItemBase parentItem;
 			bool isParentWet = false;
