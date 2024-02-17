@@ -59,14 +59,9 @@ modded class Environment
 
 		// incorporate temperature from temperature sources (buffer)
 		float tempsource = Math.AbsFloat(m_UTSAverageTemperature);
-		if ( tempsource > temperature + 0.001)
+		if ( tempsource > 0 && tempsource > temperature)
 		{
-			temperature += m_UTSAverageTemperature;
-		}
-
-		if ( tempsource < temperature - 0.001)
-		{
-			temperature -= m_UTSAverageTemperature;
+			temperature = tempsource;
 		}
 
 		return temperature;
@@ -230,9 +225,9 @@ modded class Environment
 		
 		// heat buffer
 		float applicableHB = 0.0;
-		if (m_UTSAverageTemperature < GameConstants.ENVIRO_PLAYER_COMFORT_TEMP)
+		if (m_UTSAverageTemperature <= 0)
 		{
-			applicableHB = m_Player.GetStatHeatBuffer().Get() / 30.0;
+			applicableHB = m_Player.GetStatHeatBuffer().Get() / GameConstants.ENVIRO_PLAYER_COMFORT_TEMP;
 			if (applicableHB > 0.0)
 			{
 				if (m_HeatBufferTimer > 1.0)
@@ -251,7 +246,7 @@ modded class Environment
 		}
 		else
 		{
-			applicableHB = m_Player.GetStatHeatBuffer().Get() / 30.0;
+			applicableHB = m_Player.GetStatHeatBuffer().Get() / GameConstants.ENVIRO_PLAYER_COMFORT_TEMP;
 			if (m_HeatComfort > PlayerConstants.THRESHOLD_HEAT_COMFORT_MINUS_WARNING)
 			{
 				m_Player.GetStatHeatBuffer().Add(GameConstants.ENVIRO_PLAYER_HEATBUFFER_INCREASE);
