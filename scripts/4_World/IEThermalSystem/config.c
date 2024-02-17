@@ -11,6 +11,7 @@ class IE_ThermalSystemConfig {
     bool edibles_have_temperature = true;
     bool can_consume_frozen_edibles = false;
     bool water_freezes = true;
+    bool well_water_temperature = 5.0;
     ref IE_EnvironmentConfig environment = new IE_EnvironmentConfig;
 }
 
