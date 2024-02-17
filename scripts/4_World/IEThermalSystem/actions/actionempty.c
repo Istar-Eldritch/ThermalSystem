@@ -13,6 +13,6 @@ modded class ActionEmptyBottleBase
 
     override string GetBlockedIcon(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return "ie_thermalsystem_snowflake";
+        return "btn_icon_frozen_blocked";
     }
 };
