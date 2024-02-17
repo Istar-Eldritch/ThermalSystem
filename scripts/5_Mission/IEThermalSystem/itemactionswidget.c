@@ -32,13 +32,13 @@ modded class ItemActionsWidget
     override protected void SetActionWidget(ActionBase action, string descText, string actionWidget, string descWidget)
     {
         Widget widget = m_Root.FindAnyWidget(actionWidget);
-        TextWidget actionName = TextWidget.Cast(widget.FindAnyWidget(descWidget));
-        Widget actionIcon = widget.FindAnyWidget(actionWidget + "_btn_icon");
-        string blockedIconId = actionWidget + "_" + action.GetBlockedIcon(m_Player, null, ItemBase.Cast(m_EntityInHands));
-        Widget blockedIconWidget = actionIcon.GetParent().FindAnyWidget(blockedIconId);
 
         if (action && (!action.HasTarget() || (m_Player && m_Player.GetCommand_Vehicle())))
         {
+	        TextWidget actionName = TextWidget.Cast(widget.FindAnyWidget(descWidget));
+	        Widget actionIcon = widget.FindAnyWidget(actionWidget + "_btn_icon");
+	        string blockedIconId = actionWidget + "_" + action.GetBlockedIcon(m_Player, null, ItemBase.Cast(m_EntityInHands));
+	        Widget blockedIconWidget = actionIcon.GetParent().FindAnyWidget(blockedIconId);
 
             bool isBlocked = action.IsBlocked(m_Player, null, ItemBase.Cast(m_EntityInHands));
 

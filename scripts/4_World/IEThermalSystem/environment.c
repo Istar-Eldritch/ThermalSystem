@@ -1,18 +1,6 @@
 modded class Environment
 {
-	// float m_LogTime = 0;
 
-	// override void Update(float pDelta)
-	// {
-	// 	m_LogTime += pDelta;
-	// 	if ( m_LogTime >= 10 )
-	// 	{
-	// 		m_LogTime = 0;
-	// 		Print("\n\n" + GetDebugMessage());
-	// 	}
-	// 	super.Update(pDelta);
-	// }
-	
 	// Calculates and return temperature of environment
 	override protected float GetEnvironmentTemperature()
 	{
@@ -67,6 +55,63 @@ modded class Environment
 		return temperature;
 	}
 
+	void ApplyTemperatureToItem(ItemBase pItem)
+	{
+		if (pItem && pItem.IECanHaveTemperature())
+		{
+			ItemBase parentItem;
+			InventoryLocation iLoc = new InventoryLocation();
+			InventoryLocation parentILoc = new InventoryLocation();
+
+			if (pItem.GetInventory().GetCurrentInventoryLocation(iLoc))
+			{
+				EntityAI parent = iLoc.GetParent();
+				if (parent)
+				{
+					parentItem = ItemBase.Cast(parent);
+					if (parentItem)
+					{
+						parentItem.GetInventory().GetCurrentInventoryLocation(parentILoc);
+					}
+				}
+			}
+
+			float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
+			float distanceTemp;
+			ItemBase itemInHands = m_Player.GetItemInHands();
+			if (parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
+			{
+				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
+				if (distanceTemp < diffTemp)
+					diffTemp = distanceTemp;
+
+				if (pItem.GetTemperature() > GetTemperature())
+					diffTemp = diffTemp * -1;
+			}
+			else if (parentItem != null && parentItem.IECanHaveTemperature()) // Parent
+			{
+				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
+				if (distanceTemp < diffTemp)
+					diffTemp = distanceTemp;
+
+				if (pItem.GetTemperature() > parentItem.GetTemperature())
+					diffTemp = diffTemp * -1;
+			}
+			else
+			{
+				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GameConstants.ENVIRO_PLAYER_COMFORT_TEMP);
+				if (distanceTemp < diffTemp)
+					diffTemp = distanceTemp;
+
+				if (pItem.GetTemperature() > GameConstants.ENVIRO_PLAYER_COMFORT_TEMP)
+					diffTemp = diffTemp * -1;
+			}
+
+			pItem.AddTemperature(diffTemp);
+		}
+	}
+
+	// Temperature is controlled independently of wetness
 	override override void ApplyWetnessToItem(ItemBase pItem)
 	{
 		float beforeTemperature = pItem.GetTemperature();
@@ -74,69 +119,10 @@ modded class Environment
 		if (pItem && pItem.IECanHaveTemperature())
 		{
 			pItem.SetTemperature(beforeTemperature);
-			ItemBase parentItem;
-			bool isParentWet = false;
-			bool parentContainsLiquid = false;
-			InventoryLocation iLoc = new InventoryLocation();
-			InventoryLocation parentILoc = new InventoryLocation();
-
-			if (pItem.GetInventory().GetCurrentInventoryLocation(iLoc))
-			{
-				EntityAI parent = iLoc.GetParent();
-				if (parent)
-				{
-					parentItem = ItemBase.Cast(parent);
-					if (parentItem)
-					{
-						parentItem.GetInventory().GetCurrentInventoryLocation(parentILoc);
-						if (parentItem.GetWet() >= GameConstants.STATE_SOAKING_WET)
-							isParentWet = true;
-
-						if ((parentItem.GetLiquidType() != 0) && (parentItem.GetQuantity() > 0))
-							parentContainsLiquid = true;
-					}
-					else
-						isParentWet = true;
-				}
-			}
-
-			if (isParentWet || parentContainsLiquid)
-			{
-				float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER * pItem.GetSoakingIncrement("wetParent")); // used when decreasing temperature
-				float distanceTemp;
-				ItemBase itemInHands = m_Player.GetItemInHands();
-				if (parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back and hands shall aproach ambient temperature
-				{
-					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
-					if (distanceTemp < diffTemp)
-						diffTemp = distanceTemp;
-
-					if (pItem.GetTemperature() > GetTemperature())
-						diffTemp = diffTemp * -1;
-				}
-				if (parentItem.IECanHaveTemperature())
-				{ // If the parent container has temperature, temperature aproaches its temperature
-					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
-					if (distanceTemp < diffTemp)
-						diffTemp = distanceTemp;
-
-					if (pItem.GetTemperature() > parentItem.GetTemperature())
-						diffTemp = diffTemp * -1;
-				}
-				else // Items carried somewhere else shall approach body temperature.
-				{
-					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GameConstants.ENVIRO_PLAYER_COMFORT_TEMP);
-					if (distanceTemp < diffTemp)
-						diffTemp = distanceTemp;
-
-					if (pItem.GetTemperature() > GameConstants.ENVIRO_PLAYER_COMFORT_TEMP)
-						diffTemp = diffTemp * -1;
-				}
-				pItem.SetTemperature(diffTemp);
-			}
 		}
 	}
 
+	// Temperature is controlled independently of wetness
 	override protected void ApplyDrynessToItemEx(ItemBase pItem, EnvironmentDrynessData pDrynessData)
 	{
 		float beforeTemperature = pItem.GetTemperature();
@@ -144,67 +130,6 @@ modded class Environment
 		if (pItem && pItem.IECanHaveTemperature())
 		{
 			pItem.SetTemperature(beforeTemperature);
-			ItemBase parentItem;
-			bool isParentWet = false;
-			bool parentContainsLiquid = false;
-
-			InventoryLocation iLoc = new InventoryLocation();
-			InventoryLocation parentILoc = new InventoryLocation();
-
-			if (pItem.GetInventory().GetCurrentInventoryLocation(iLoc))
-			{
-				EntityAI parent = iLoc.GetParent();
-				if (parent)
-				{
-					parentItem = ItemBase.Cast(parent);
-					if (parentItem)
-					{
-						parentItem.GetInventory().GetCurrentInventoryLocation(parentILoc);
-						if (parentItem.GetWet() >= GameConstants.STATE_SOAKING_WET)
-							isParentWet = true;
-
-						if ((parentItem.GetLiquidType() != 0) && (parentItem.GetQuantity() > 0))
-							parentContainsLiquid = true;
-					}
-				}
-			}
-
-			float diffTemp;
-			float distanceTemp;
-			if (!isParentWet && !parentContainsLiquid)
-			{
-				diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
-				ItemBase itemInHands = m_Player.GetItemInHands();
-				if (parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
-				{
-					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
-					if (distanceTemp < diffTemp)
-						diffTemp = distanceTemp;
-
-					if (pItem.GetTemperature() > GetTemperature())
-						diffTemp = diffTemp * -1;
-				}
-				else if (parentItem != null && parentItem.IECanHaveTemperature()) // Parent
-				{
-					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
-					if (distanceTemp < diffTemp)
-						diffTemp = distanceTemp;
-
-					if (pItem.GetTemperature() > parentItem.GetTemperature())
-						diffTemp = diffTemp * -1;
-				}
-				else
-				{
-					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GameConstants.ENVIRO_PLAYER_COMFORT_TEMP);
-					if (distanceTemp < diffTemp)
-						diffTemp = distanceTemp;
-
-					if (pItem.GetTemperature() > GameConstants.ENVIRO_PLAYER_COMFORT_TEMP)
-						diffTemp = diffTemp * -1;
-				}
-
-				pItem.AddTemperature(diffTemp);
-			}
 		}
 	}
 	
@@ -215,6 +140,11 @@ modded class Environment
 		
 		float heatComfortAvg;
 		float heatAvg;
+
+		if (m_Player.GetItemInHands())
+		{
+			ApplyTemperatureToItem(m_Player.GetItemInHands());
+		}
 
 		BodyPartHeatProperties(m_HeadParts, GameConstants.ENVIRO_HEATCOMFORT_HEADPARTS_WEIGHT, hcHead, hHead);
 		BodyPartHeatProperties(m_BodyParts, GameConstants.ENVIRO_HEATCOMFORT_BODYPARTS_WEIGHT, hcBody, hBody);
@@ -313,11 +243,12 @@ modded class Environment
 						pHeatComfort += heatIsoMult * MiscGameplayFunctions.GetCurrentItemHeatIsolation(item);
 						if (item.IECanHaveTemperature())
 						{
+							ApplyTemperatureToItem(item);
 							pHeat += ItemTempToCoef(item.GetTemperature());
 						}
 						// go through any attachments and cargo (only current level, ignore nested containers - they isolate)
 						int inAttCount = item.GetInventory().AttachmentCount();
-						if (inAttCount > 0 && attachmentSlot != InventorySlots.BACK)
+						if (inAttCount > 0)
 						{
 							for (int inAttIdx = 0; inAttIdx < inAttCount; inAttIdx++)
 							{
@@ -325,11 +256,15 @@ modded class Environment
 								ItemBase itemAtt = ItemBase.Cast(inAttachment);
 								if (itemAtt != null && itemAtt.IECanHaveTemperature())
 								{
-									pHeat += ItemTempToCoef(itemAtt.GetTemperature());
+									ApplyTemperatureToItem(itemAtt);
+									if (attachmentSlot != InventorySlots.BACK)
+									{
+										pHeat += ItemTempToCoef(itemAtt.GetTemperature());
+									}
 								}
 							}
 						}
-						if (item.GetInventory().GetCargo() && attachmentSlot != InventorySlots.BACK )
+						if (item.GetInventory().GetCargo())
 						{
 							int inItemCount = item.GetInventory().GetCargo().GetItemCount();
 							
@@ -338,7 +273,11 @@ modded class Environment
 								ItemBase inItem;
 								if (Class.CastTo(inItem, item.GetInventory().GetCargo().GetItem(j)) && inItem.IECanHaveTemperature())
 								{
-									pHeat += ItemTempToCoef(inItem.GetTemperature());
+									ApplyTemperatureToItem(inItem);
+									if(attachmentSlot != InventorySlots.BACK )
+									{
+										pHeat += ItemTempToCoef(inItem.GetTemperature());
+									}
 								}
 							}
 						}
