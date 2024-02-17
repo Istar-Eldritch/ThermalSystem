@@ -109,7 +109,8 @@ modded class Environment
 			{
 				float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER * pItem.GetSoakingIncrement("wetParent")); // used when decreasing temperature
 				float distanceTemp;
-				if (parentILoc.GetSlot() == InventorySlots.BACK) // Items carried on the back shall aproach ambient temperature
+				ItemBase itemInHands = m_Player.GetItemInHands();
+				if (parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back and hands shall aproach ambient temperature
 				{
 					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
 					if (distanceTemp < diffTemp)
@@ -178,7 +179,8 @@ modded class Environment
 			if (!isParentWet && !parentContainsLiquid)
 			{
 				diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
-				if (parentILoc.GetSlot() == InventorySlots.BACK) // Items carried on the back shall aproach ambient temperature
+				ItemBase itemInHands = m_Player.GetItemInHands();
+				if (parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
 				{
 					distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
 					if (distanceTemp < diffTemp)
