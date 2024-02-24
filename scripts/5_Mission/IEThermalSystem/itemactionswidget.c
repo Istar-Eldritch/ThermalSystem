@@ -37,8 +37,16 @@ modded class ItemActionsWidget
         {
 	        TextWidget actionName = TextWidget.Cast(widget.FindAnyWidget(descWidget));
 	        Widget actionIcon = widget.FindAnyWidget(actionWidget + "_btn_icon");
-	        string blockedIconId = actionWidget + "_" + action.GetBlockedIcon(m_Player, null, ItemBase.Cast(m_EntityInHands));
-	        Widget blockedIconWidget = actionIcon.GetParent().FindAnyWidget(blockedIconId);
+			Widget frozenIcon = actionIcon.GetParent().FindAnyWidget(actionWidget + "_btn_icon_frozen_blocked");
+			frozenIcon.Show(false);
+			string blockedIconId = action.GetBlockedIcon(m_Player, null, ItemBase.Cast(m_EntityInHands));
+			Widget blockedIconWidget;
+			switch (blockedIconId)
+			{
+				case "btn_icon_frozen_blocked":
+					blockedIconWidget = frozenIcon;
+					break;
+			}
 
             bool isBlocked = action.IsBlocked(m_Player, null, ItemBase.Cast(m_EntityInHands));
 
@@ -47,10 +55,6 @@ modded class ItemActionsWidget
                 descText = descText + " " + "#action_target_cursor_hold";
                 actionName.SetText(descText);
                 actionIcon.Show(true);
-				if (blockedIconWidget)
-				{
-					blockedIconWidget.Show(false);
-				}
             }
             else
             {
