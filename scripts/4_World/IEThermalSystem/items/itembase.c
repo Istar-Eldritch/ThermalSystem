@@ -15,6 +15,9 @@ modded class ItemBase
 	override void InitItemVariables()
 	{
 		super.InitItemVariables();
+		m_VarTemperatureMin = -273;
+		m_VarTemperatureMax = 10000;
+		UpdateNetSyncVariableFloat("m_VarTemperature", GetTemperatureMin(),GetTemperatureMax());
 
 		if (CanHaveTemperature())
 		{

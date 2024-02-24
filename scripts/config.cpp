@@ -59,40 +59,4 @@ class CfgVehicles
 				"DirectCookingB",
 				"DirectCookingC"};
 	};
-
-	class Clothing : Inventory_Base
-	{
-		scope = 2;
-		varTemperatureMin = -273;
-		varTemperatureMax = 200;
-	}
-
-	class WaterBottle : Bottle_Base
-	{
-		scope = 2;
-		varTemperatureMax = 100;
-	};
-	class Canteen : Bottle_Base
-	{
-		scope = 2;
-		varTemperatureMax = 100;
-	};
-	class WaterPouch_ColorBase : Bottle_Base
-	{
-		scope = 2;
-		varTemperatureMax = 100;
-	};
-
-	class FoodCan_100g_ColorBase: Edible_Base
-	{
-		scope = 2;
-		varTemperatureMax = 100;
-	};
-
-
-	class FoodCan_250g_ColorBase: Edible_Base
-	{
-		scope = 2;
-		varTemperatureMax = 100;
-	};
 };
