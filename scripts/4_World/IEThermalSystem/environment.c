@@ -76,38 +76,37 @@ modded class Environment
 				}
 			}
 
-			float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * GameConstants.TEMPERATURE_RATE_COOLING_PLAYER);
+			float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * pItem.GetThermalEnergyTransferRatio());
 			float distanceTemp;
 			ItemBase itemInHands = m_Player.GetItemInHands();
 			if (parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
 			{
 				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
-				if (distanceTemp < diffTemp)
-					diffTemp = distanceTemp;
+				diffTemp *= distanceTemp;
 
 				if (pItem.GetTemperature() > GetTemperature())
-					diffTemp = diffTemp * -1;
+					diffTemp *= -1;
 			}
 			else if (parentItem != null && parentItem.IECanHaveTemperature()) // Parent
 			{
 				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
-				if (distanceTemp < diffTemp)
-					diffTemp = distanceTemp;
+				diffTemp *= distanceTemp;
+				float parentDiff = parentItem.GetThermalEnergyTransferRatio() * GameConstants.ENVIRO_TICK_RATE * distanceTemp;
 
 				if (pItem.GetTemperature() > parentItem.GetTemperature())
-					diffTemp = diffTemp * -1;
+					diffTemp *= -1;
+					parentDiff *= -1;
+				parentItem.AddThermalEnergy(parentDiff * -1);
 			}
 			else
 			{
 				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GameConstants.ENVIRO_PLAYER_COMFORT_TEMP);
-				if (distanceTemp < diffTemp)
-					diffTemp = distanceTemp;
-
+				diffTemp *= distanceTemp;
 				if (pItem.GetTemperature() > GameConstants.ENVIRO_PLAYER_COMFORT_TEMP)
 					diffTemp = diffTemp * -1;
 			}
 
-			pItem.AddTemperature(diffTemp);
+			pItem.AddThermalEnergy(diffTemp);
 		}
 	}
 

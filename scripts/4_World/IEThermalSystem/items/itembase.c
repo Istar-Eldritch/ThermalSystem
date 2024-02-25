@@ -1,8 +1,5 @@
 modded class ItemBase
 {
-	const int HEAT_CAPACITY_MASK = 255;
-	const int THERMAL_ENERGY_MASK = 1024;
-
 	float m_HeatCapacity;
 	float m_ThermalEnergy;
 	float m_ThermalConductivity;
@@ -105,7 +102,7 @@ modded class ItemBase
 	float GetThermalEnergyTransferRatio()
 	{
 		auto config = GetThermalSystemConfig();
-		return (GetThermalConductivity() * GetArea() * config.environment.thermal_conductivity_coefficient) / (GetThickness() * 1000));
+		return (GetThermalConductivity() * GetArea() * config.environment.thermal_conductivity_rate) / (GetThickness() * 1000));
 	}
 	
 	float GetThermalConductivity()
@@ -136,6 +133,8 @@ modded class ItemBase
 			float b = Math.AbsFloat(min[1] - max[1]);
 			float c = Math.AbsFloat(min[2] - max[2]);
 			m_Area = 2*(a*b+a*c+b*c);
+			if (m_Area < 0.1)
+				m_Area = 0.1;
 		}
 		
 		return m_Area;

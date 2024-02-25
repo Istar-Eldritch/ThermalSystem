@@ -3,7 +3,7 @@ class IE_EnvironmentConfig
     float player_comfort_temp_low = 20;
     float player_comfort_temp_hi = 35;
     float item_temp_effect_on_player = 60;
-    float thermal_conductivity_coefficient = 1;
+    float thermal_conductivity_rate = 1;
 }
 
 class IE_SpecificHeatCapacity
@@ -35,7 +35,7 @@ class IE_ThermalSystemConfig {
 array<ref IE_SpecificHeatCapacity> IE_DefaultHeatCapacities()
 {
   array<ref IE_SpecificHeatCapacity> heat_capacities = new array<ref IE_SpecificHeatCapacity>;
-  heat_capacities.Insert(new IE_SpecificHeatCapacity("Clothing", 1.5, 0.03));
+  heat_capacities.Insert(new IE_SpecificHeatCapacity("Clothing", 1.5, 0.7));
   heat_capacities.Insert(new IE_SpecificHeatCapacity("Edible_Base", 2.98, 0.599));
   heat_capacities.Insert(new IE_SpecificHeatCapacity("Object", 1.012, 0.02535));
   return heat_capacities;
