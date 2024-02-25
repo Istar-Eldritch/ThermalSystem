@@ -60,15 +60,6 @@ modded class ActionExtinguishFireplaceByLiquid
     {
         return "btn_icon_frozen_blocked";
     }
-
-	override protected void OnExecuteServer( ActionData action_data )
-	{
-        ItemBase targetItem = ItemBase.Cast(action_data.m_Target.GetObject());
-        if(targetItem.IECanHaveTemperature() && action_data.m_MainItem.IECanHaveTemperature())
-        {
-            targetItem.SetTemperature(action_data.m_MainItem.GetTemperature());
-        }
-	}
 };
 
 modded class ActionFillBottleBase
