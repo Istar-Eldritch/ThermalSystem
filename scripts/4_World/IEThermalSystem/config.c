@@ -28,6 +28,7 @@ class IE_ThermalSystemConfig
   bool can_consume_frozen_edibles = false;
   bool water_freezes = true;
   bool water_well_temperature = 5.0;
+  bool frozen_edibles_decay = 0;
   ref IE_EnvironmentConfig environment = new IE_EnvironmentConfig;
   ref array<ref IE_SpecificHeatCapacity> heat_capacities = IE_DefaultHeatCapacities();
   ref array<string> frozen_edibles = IE_DefaultFrozenConsumables();

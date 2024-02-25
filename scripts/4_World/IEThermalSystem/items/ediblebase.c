@@ -20,6 +20,15 @@ modded class Edible_Base : ItemBase
 			}
 		}
 		
-		return config.can_consume_frozen_edibles
+		return config.can_consume_frozen_edibles;
     }
+
+	override void ProcessDecay( float delta, bool hasRootAsPlayer )
+	{
+		auto config = GetThermalSystemConfig();
+		if (config.frozen_edibles_decay)
+		{
+			super.ProcessDecay(delta, hasRootAsPlayer);
+		}
+	}
 }
