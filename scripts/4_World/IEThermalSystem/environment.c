@@ -57,6 +57,7 @@ modded class Environment
 
 	void ApplyTemperatureToItem(ItemBase pItem)
 	{
+		auto config = GetThermalSystemConfig();
 		if (pItem && pItem.IECanHaveTemperature())
 		{
 			ItemBase parentItem;
@@ -79,7 +80,7 @@ modded class Environment
 			float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * pItem.GetThermalEnergyTransferRatio());
 			float distanceTemp;
 			ItemBase itemInHands = m_Player.GetItemInHands();
-			if (parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
+			if (!config.environment.inventory_items_warmup || parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
 			{
 				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
 				diffTemp *= distanceTemp;
@@ -214,6 +215,7 @@ modded class Environment
 		
 		pHeatComfort = -1;
 		attCount = m_Player.GetInventory().AttachmentCount();
+		auto config = GetThermalSystemConfig();
 
 		for (int attIdx = 0; attIdx < attCount; attIdx++)
 		{
@@ -240,10 +242,11 @@ modded class Environment
 						}
 
 						pHeatComfort += heatIsoMult * MiscGameplayFunctions.GetCurrentItemHeatIsolation(item);
-						if (item.IECanHaveTemperature())
+						if (attachmentSlot != InventorySlots.BACK && item.IECanHaveTemperature())
 						{
 							ApplyTemperatureToItem(item);
-							pHeat += ItemTempToCoef(item.GetTemperature());
+							if (config.environment.items_affect_player_temperature)
+								pHeat += ItemTempToCoef(item.GetTemperature());
 						}
 						// go through any attachments and cargo (only current level, ignore nested containers - they isolate)
 						int inAttCount = item.GetInventory().AttachmentCount();
@@ -256,7 +259,7 @@ modded class Environment
 								if (itemAtt != null && itemAtt.IECanHaveTemperature())
 								{
 									ApplyTemperatureToItem(itemAtt);
-									if (attachmentSlot != InventorySlots.BACK)
+									if (attachmentSlot != InventorySlots.BACK && config.environment.items_affect_player_temperature)
 									{
 										pHeat += ItemTempToCoef(itemAtt.GetTemperature());
 									}
@@ -273,7 +276,7 @@ modded class Environment
 								if (Class.CastTo(inItem, item.GetInventory().GetCargo().GetItem(j)) && inItem.IECanHaveTemperature())
 								{
 									ApplyTemperatureToItem(inItem);
-									if(attachmentSlot != InventorySlots.BACK )
+									if(attachmentSlot != InventorySlots.BACK && config.environment.items_affect_player_temperature)
 									{
 										pHeat += ItemTempToCoef(inItem.GetTemperature());
 									}

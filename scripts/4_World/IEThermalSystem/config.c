@@ -4,6 +4,8 @@ class IE_EnvironmentConfig
   float player_comfort_temp_hi = 35;
   float item_temp_effect_on_player = 60;
   float thermal_conductivity_rate = 1;
+  bool items_affect_player_temperature = 1;
+  bool inventory_items_warmup = 1;
 }
 
 class IE_SpecificHeatCapacity
@@ -22,7 +24,7 @@ class IE_SpecificHeatCapacity
 
 class IE_ThermalSystemConfig
 {
-  int version = 1;
+  int version = 2;
   bool clothing_has_temperature = true;
   bool edibles_have_temperature = true;
   bool can_consume_frozen_edibles = false;
