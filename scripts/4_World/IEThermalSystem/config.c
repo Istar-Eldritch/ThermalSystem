@@ -68,6 +68,7 @@ class IE_ThermalSystemConfig
   float water_well_temperature = 5.0;
   bool frozen_edibles_decay = 0;
   float skinning_item_temperature = 30;
+  float fishing_item_temperature = 5;
   ref IE_EnvironmentConfig environment = new IE_EnvironmentConfig;
   ref array<ref IE_SpecificHeatCapacity> heat_capacities = IE_DefaultHeatCapacities();
   ref array<string> frozen_edibles = IE_DefaultFrozenConsumables();
