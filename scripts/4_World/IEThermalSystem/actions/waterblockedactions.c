@@ -1,5 +1,7 @@
 modded class ActionDrainLiquid
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         ItemBase targetItem = ItemBase.Cast(target.GetObject());
@@ -19,15 +21,45 @@ modded class ActionDrainLiquid
 	override protected void OnExecuteServer( ActionData action_data )
 	{
         ItemBase targetItem = ItemBase.Cast(action_data.m_Target.GetObject());
+		action_data.m_MainItem.GetTemperature();
         if(targetItem.IECanHaveTemperature() && action_data.m_MainItem.IECanHaveTemperature())
         {
             targetItem.SetTemperature(action_data.m_MainItem.GetTemperature());
         }
 	}
+
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionEmptyBottleBase
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -42,10 +74,38 @@ modded class ActionEmptyBottleBase
     {
         return "btn_icon_frozen_blocked";
     }
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionExtinguishFireplaceByLiquid
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -60,23 +120,54 @@ modded class ActionExtinguishFireplaceByLiquid
     {
         return "btn_icon_frozen_blocked";
     }
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionFillBottleBase
 {
-
-	override protected void OnExecuteServer( ActionData action_data )
+	override void OnEndAnimationLoop( ActionData action_data )
 	{
-        ItemBase item = action_data.m_MainItem;
-        if(item.IECanHaveTemperature() && item.m_VarLiquidType == LIQUID_WATER)
-        {
-            item.SetTemperature(GetThermalSystemConfig().water_well_temperature);
-        }
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(GetThermalSystemConfig().water_well_temperature);
+            }
+		}
 	}
 };
 
 modded class ActionFillCoolant
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -91,10 +182,38 @@ modded class ActionFillCoolant
     {
         return "btn_icon_frozen_blocked";
     }
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionWaterPlant
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -109,10 +228,38 @@ modded class ActionWaterPlant
     {
         return "btn_icon_frozen_blocked";
     }
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionWaterGardenSlot
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -127,10 +274,38 @@ modded class ActionWaterGardenSlot
     {
         return "btn_icon_frozen_blocked";
     }
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionForceDrink
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -145,10 +320,38 @@ modded class ActionForceDrink
     {
         return "btn_icon_frozen_blocked";
     }
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionPourLiquid
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -172,10 +375,38 @@ modded class ActionPourLiquid
             targetItem.SetTemperature(action_data.m_MainItem.GetTemperature());
         }
 	}
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };
 
 modded class ActionWashHandsItemContinuous
 {
+    float m_TempMem;
+
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
@@ -190,4 +421,30 @@ modded class ActionWashHandsItemContinuous
     {
         return "btn_icon_frozen_blocked";
     }
+
+	override void OnStartAnimationLoop( ActionData action_data )
+	{
+        super.OnStartAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                m_TempMem = bottle.GetTemperature();
+            }
+		}
+	}
+
+	override void OnEndAnimationLoop( ActionData action_data )
+	{
+        super.OnEndAnimationLoop(action_data);
+		if (GetGame().IsServer() )
+		{
+			Bottle_Base bottle = Bottle_Base.Cast( action_data.m_MainItem );
+            if (bottle)
+            {
+                bottle.SetTemperature(m_TempMem);
+            }
+		}
+	}
 };

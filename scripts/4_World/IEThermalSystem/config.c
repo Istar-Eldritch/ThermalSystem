@@ -1,3 +1,25 @@
+class IE_EnvironmentConfigV1
+{
+    float player_comfort_temp_low = 20;
+    float player_comfort_temp_hi = 35;
+    float item_temp_effect_on_player = 60;
+}
+
+class IE_ThermalSystemConfigV1 {
+    int version = 1;
+    bool clothing_has_temperature = true;
+    bool edibles_have_temperature = true;
+    bool can_consume_frozen_edibles = false;
+    bool water_freezes = true;
+    bool water_well_temperature = 5.0;
+    ref IE_EnvironmentConfigV1 environment;
+}
+
+class IE_ThermalSystemVersion
+{
+  int version;
+}
+
 class IE_EnvironmentConfig
 {
   float player_comfort_temp_low = 20;
@@ -61,6 +83,7 @@ class IE_ThermalSystemConfigLoader
 
   static private const string DIR_PATH = "$profile:IE";
   static private const string CONFIG_PATH = DIR_PATH + "\\ThermalSystem.json";
+  static private const string CONFIG_PATH_V1 = DIR_PATH + "\\ThermalSystem.json.v1back";
 
   ref IE_ThermalSystemConfig config = new IE_ThermalSystemConfig;
 
@@ -73,7 +96,31 @@ class IE_ThermalSystemConfigLoader
 
     if (FileExist(CONFIG_PATH))
     { // If config exist load File
-      JsonFileLoader<ref IE_ThermalSystemConfig>.JsonLoadFile(CONFIG_PATH, config);
+      IE_ThermalSystemVersion v;
+      JsonFileLoader<IE_ThermalSystemVersion>.JsonLoadFile(CONFIG_PATH, v);
+      if (v.version == 2)
+      {
+        JsonFileLoader<IE_ThermalSystemConfig>.JsonLoadFile(CONFIG_PATH, config);
+      }
+      else if (v.version == 1)
+      {
+        IE_ThermalSystemConfigV1 v1;
+        JsonFileLoader<IE_ThermalSystemConfigV1>.JsonLoadFile(CONFIG_PATH, v1);
+        config.clothing_has_temperature = v1.clothing_has_temperature;
+        config.edibles_have_temperature = v1.edibles_have_temperature;
+        config.can_consume_frozen_edibles = v1.can_consume_frozen_edibles;
+        config.water_freezes = v1.water_freezes;
+        config.water_well_temperature = v1.water_well_temperature;
+        config.environment.player_comfort_temp_low = v1.environment.player_comfort_temp_low;
+        config.environment.player_comfort_temp_hi = v1.environment.player_comfort_temp_hi;
+        config.environment.item_temp_effect_on_player = v1.environment.item_temp_effect_on_player;
+        JsonFileLoader<IE_ThermalSystemConfigV1>.JsonSaveFile(CONFIG_PATH_V1, v1);
+        Save();
+      }
+      else
+      {
+        Print("[Thermal System] ERROR! Non recognised version.");
+      }
     }
     else
     {
