@@ -114,7 +114,7 @@ class IE_ThermalSystemConfigLoader
     { // If config exist load File
       IE_ThermalSystemVersion v;
       JsonFileLoader<IE_ThermalSystemVersion>.JsonLoadFile(CONFIG_PATH, v);
-      if (v.version == 2)
+      if (v.version == 3)
       {
         JsonFileLoader<IE_ThermalSystemConfig>.JsonLoadFile(CONFIG_PATH, config);
       }
