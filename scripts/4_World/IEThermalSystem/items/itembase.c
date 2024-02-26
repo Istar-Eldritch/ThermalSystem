@@ -37,6 +37,14 @@ modded class ItemBase
 			}
 		}
 	}
+
+	override protected float GetWeightSpecialized(bool forceRecalc = false)
+	{
+		float temp = GetTemperature();
+		float result = super.GetWeightSpecialized();
+		SetTemperature(temp);
+		return result;
+	}
 	
 	override void SetTemperature(float value, bool allow_client = false)
 	{
