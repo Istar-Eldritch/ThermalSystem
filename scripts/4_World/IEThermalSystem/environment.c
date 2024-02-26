@@ -98,12 +98,14 @@ modded class Environment
 			{
 				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - parentItem.GetTemperature());
 				diffTemp *= distanceTemp;
-				float parentDiff = parentItem.GetThermalEnergyTransferRatio() * GameConstants.ENVIRO_TICK_RATE * distanceTemp;
+				float parentDiff = parentItem.GetThermalEnergyTransferRatio() * GameConstants.ENVIRO_TICK_RATE * distanceTemp * -1;
 
 				if (pItem.GetTemperature() > parentItem.GetTemperature())
+				{
 					diffTemp *= -1;
 					parentDiff *= -1;
-				parentItem.AddThermalEnergy(parentDiff * -1);
+				}
+				parentItem.AddThermalEnergy(parentDiff);
 			}
 			else
 			{
@@ -251,7 +253,7 @@ modded class Environment
 						if (attachmentSlot != InventorySlots.BACK && item.IECanHaveTemperature())
 						{
 							ApplyTemperatureToItem(item);
-							if (config.environment.items_affect_player_temperature)
+							if (item.CanAffectPlayerComfort())
 								pHeat += ItemTempToCoef(item.GetTemperature());
 						}
 						// go through any attachments and cargo (only current level, ignore nested containers - they isolate)
@@ -265,7 +267,7 @@ modded class Environment
 								if (itemAtt != null && itemAtt.IECanHaveTemperature())
 								{
 									ApplyTemperatureToItem(itemAtt);
-									if (attachmentSlot != InventorySlots.BACK && config.environment.items_affect_player_temperature)
+									if (attachmentSlot != InventorySlots.BACK && itemAtt.CanAffectPlayerComfort())
 									{
 										pHeat += ItemTempToCoef(itemAtt.GetTemperature());
 									}
@@ -282,7 +284,7 @@ modded class Environment
 								if (Class.CastTo(inItem, item.GetInventory().GetCargo().GetItem(j)) && inItem.IECanHaveTemperature())
 								{
 									ApplyTemperatureToItem(inItem);
-									if(attachmentSlot != InventorySlots.BACK && config.environment.items_affect_player_temperature)
+									if(attachmentSlot != InventorySlots.BACK && inItem.CanAffectPlayerComfort())
 									{
 										pHeat += ItemTempToCoef(inItem.GetTemperature());
 									}

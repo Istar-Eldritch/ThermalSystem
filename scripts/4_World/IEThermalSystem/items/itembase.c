@@ -5,6 +5,8 @@ modded class ItemBase
 	float m_ThermalConductivity;
 	float m_Area;
 	float m_Thickness;
+	bool m_AffectsPlayerComfort;
+	float m_CurrentWeight;
 
 	bool IsTemperatureVisible()
 	{
@@ -16,6 +18,11 @@ modded class ItemBase
 	bool IECanHaveTemperature()
 	{
 		return CanHaveTemperature();
+	}
+	
+	bool CanAffectPlayerComfort()
+	{
+		return GetThermalSystemConfig().environment.items_affect_player_temperature || CanHaveTemperature() && m_AffectsPlayerComfort;
 	}
 
 	override void InitItemVariables()
@@ -35,14 +42,26 @@ modded class ItemBase
 				m_ThermalEnergy = CalculateThermalEnergy(temperature);
 				CalculateTemperature(m_ThermalEnergy, true);
 			}
+			auto config = GetThermalSystemConfig();
+			foreach(auto cls: config.forced_affects_comfort)
+			{
+				if (GetGame().IsKindOf(GetType(), cls))
+				{
+					m_AffectsPlayerComfort = true;
+					break;
+				}
+			}
 		}
+		m_CurrentWeight = GetSingleInventoryItemWeightEx();
 	}
 
 	override protected float GetWeightSpecialized(bool forceRecalc = false)
 	{
 		float temp = GetTemperature();
 		float result = super.GetWeightSpecialized();
-		SetTemperature(temp);
+		if (GetGame().IsServer())
+			m_CurrentWeight = result;
+			SetTemperature(temp);
 		return result;
 	}
 	
@@ -71,7 +90,7 @@ modded class ItemBase
 	
 	float CalculateThermalEnergy(float temperature)
 	{
-		return (GetSingleInventoryItemWeightEx() / 1000) * (temperature + 273) * m_HeatCapacity;
+		return (m_CurrentWeight / 1000) * (temperature + 273) * GetHeatCapacity();
 	}
 	
 	float GetThermalEnergy()
