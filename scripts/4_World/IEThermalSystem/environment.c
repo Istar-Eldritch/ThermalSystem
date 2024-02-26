@@ -1,5 +1,10 @@
 modded class Environment
 {
+	override void Init(PlayerBase pPlayer)
+	{
+		super.Init(pPlayer);
+		m_FeetParts.Insert(InventorySlots.HIPS);
+	}
 
 	// Calculates and return temperature of environment
 	override protected float GetEnvironmentTemperature()
@@ -80,7 +85,8 @@ modded class Environment
 			float diffTemp = Math.AbsFloat(GameConstants.ENVIRO_TICK_RATE * pItem.GetThermalEnergyTransferRatio());
 			float distanceTemp;
 			ItemBase itemInHands = m_Player.GetItemInHands();
-			if (!config.environment.inventory_items_warmup || parentILoc.GetSlot() == InventorySlots.BACK || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
+			bool isExternalInventory = parentILoc.GetSlot() == InventorySlots.BACK || parentILoc.GetSlot() == InventorySlots.HIPS;
+			if (!config.environment.inventory_items_warmup || isExternalInventory || (itemInHands != null && itemInHands.GetID() == pItem.GetID())) // Items carried on the back shall aproach ambient temperature
 			{
 				distanceTemp = Math.AbsFloat(pItem.GetTemperature() - GetTemperature());
 				diffTemp *= distanceTemp;
