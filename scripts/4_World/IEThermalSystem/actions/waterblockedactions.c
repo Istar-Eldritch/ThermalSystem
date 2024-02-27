@@ -22,7 +22,7 @@ modded class ActionDrainLiquid
 		action_data.m_MainItem.GetTemperature();
         if(targetItem.IECanHaveTemperature() && action_data.m_MainItem.IECanHaveTemperature())
         {
-            targetItem.SetTemperature(action_data.m_MainItem.GetTemperature());
+            action_data.m_MainItem.SetTemperature(targetItem.GetTemperature());
         }
 	}
 };
