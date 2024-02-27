@@ -25,6 +25,47 @@ modded class ItemBase
 		return GetThermalSystemConfig().environment.items_affect_player_temperature || CanHaveTemperature() && m_AffectsPlayerComfort;
 	}
 
+	override void OnCEUpdate()
+	{
+		super.OnCEUpdate();
+		if (IsUniversalTemperatureSource())
+		{
+			auto source = GetUniversalTemperatureSource();
+			float sourcetemp = source.GetTemperature();
+			vector sourcepos = source.GetPosition();
+			float sourcefullrange = source.GetFullRange();
+			float sourcemaxrange = source.GetMaxRange();
+			array<Object> nearestObjects = new array<Object>;
+			GetGame().GetObjectsAtPosition(GetPosition(), GameConstants.ENVIRO_TEMP_SOURCES_LOOKUP_RADIUS, nearestObjects, null);
+
+			foreach (Object nearestObject : nearestObjects)
+			{
+				ItemBase item = ItemBase.Cast(nearestObject);
+				if (item != null && item.IECanHaveTemperature() && item != this)
+				{
+					float distance = Math.Max(vector.Distance(item.GetPosition(), sourcepos), 0.1);
+					float sourceTemp = 0;
+					if (distance > sourcefullrange)
+					{
+						float distFactor = Math.Max(1 - (distance / sourcemaxrange), 0.0);
+						sourceTemp = sourcetemp * distFactor;
+					}
+					else
+					{
+						sourceTemp = sourcetemp;	
+					}
+
+					if (item.GetTemperature() < sourceTemp)
+					{
+						float distanceTemp = Math.AbsFloat(item.GetTemperature() - sourceTemp);
+						float thermalEnergy = Math.AbsFloat(m_ElapsedSinceLastUpdate * item.GetThermalEnergyTransferRatio()) * distanceTemp;
+						item.AddThermalEnergy(thermalEnergy);
+					}
+				}
+			}
+		}
+	}
+
 	override void InitItemVariables()
 	{
 		super.InitItemVariables();
@@ -32,7 +73,6 @@ modded class ItemBase
 		m_VarTemperatureMax = 10000;
 		GetHeatCapacity();
 		UpdateNetSyncVariableFloat("m_VarTemperature", GetTemperatureMin(),GetTemperatureMax());
-
 		if (CanHaveTemperature() && GetGame().IsServer())
 		{
 			Mission mission = GetGame().GetMission();
@@ -52,16 +92,21 @@ modded class ItemBase
 				}
 			}
 		}
-		m_CurrentWeight = GetSingleInventoryItemWeightEx();
 	}
 
 	override protected float GetWeightSpecialized(bool forceRecalc = false)
 	{
 		float temp = GetTemperature();
 		float result = super.GetWeightSpecialized();
-		if (GetGame().IsServer())
-			m_CurrentWeight = result;
-			SetTemperature(temp);
+		if (GetGame().IsServer() && CanHaveTemperature())
+		{
+			if (Math.AbsFloat(result - m_CurrentWeight) > 10e-3)
+			{
+				m_CurrentWeight = result;
+				SetTemperature(temp);
+			}
+		}
+			
 		return result;
 	}
 	
@@ -90,7 +135,7 @@ modded class ItemBase
 	
 	float CalculateThermalEnergy(float temperature)
 	{
-		return (m_CurrentWeight / 1000) * (temperature + 273) * GetHeatCapacity();
+		return (GetSingleInventoryItemWeightEx() / 1000) * (temperature + 273) * GetHeatCapacity();
 	}
 	
 	float GetThermalEnergy()

@@ -2,7 +2,7 @@ modded class Bottle_Base
 {
     override bool CanHaveTemperature()
     {
-        return GetThermalSystemConfig().edibles_have_temperature && IsLiquidPresent();
+        return GetThermalSystemConfig().edibles_have_temperature && IsLiquidPresent() && GetQuantity() > 0;
     }
 
     override bool CanBeConsumedFrozen()
