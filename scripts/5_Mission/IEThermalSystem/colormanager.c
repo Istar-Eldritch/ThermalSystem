@@ -20,10 +20,7 @@ modded class ColorManager
             if (item.IsTemperatureVisible())
             {
                 float temperature = item.GetTemperature();
-                if (temperature)
-                {
-                    color = IEGetTemperatureColor(temperature);
-                }
+                color = IEGetTemperatureColor(temperature);
             }
         }
         return color;

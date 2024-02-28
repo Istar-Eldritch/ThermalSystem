@@ -8,7 +8,8 @@ modded class ItemManager
             {
                 if (item && item.IsInherited(ItemBase))
                 {
-                    int color = ColorManager.GetInstance().GetItemColor(ItemBase.Cast(item)); // !!!!!
+                    float temperature = item.GetTemperature();
+                    int color = IEGetTemperatureColor(temperature); // !!!!!
                     if (color)
                     {
                         string name = item_w.GetName();

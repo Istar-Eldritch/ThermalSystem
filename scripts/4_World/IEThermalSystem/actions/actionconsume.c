@@ -4,7 +4,7 @@ modded class ActionConsume
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         Edible_Base edible = Edible_Base.Cast(item);
-        return edible.IECanHaveTemperature() && edible.GetTemperature() < 0 && !edible.CanBeConsumedFrozen();
+        return edible.IECanHaveTemperature() && edible.IsFrozen() && !edible.CanBeConsumedFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)

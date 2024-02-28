@@ -1,12 +1,12 @@
 const int IE_COLOR_ICE = 0xffACC8E5;
 
-int IEGetTemperatureColor( int temperature )
+int IEGetTemperatureColor( float temperature )
 {
 	int alpha = 128;
 	int red = 153;
 	int green = 153;
 	int blue = 153;
-    if (temperature < 0)
+    if (temperature <= 0)
     {
         return IE_COLOR_ICE;
     }

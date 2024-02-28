@@ -15,6 +15,11 @@ modded class ItemBase
 		return IECanHaveTemperature() && (GetTemperature() < player_comfort_temp_low || GetTemperature() > player_comfort_temp_hi );
 	}
 
+	bool IsFrozen()
+	{
+		return CanHaveTemperature() && GetTemperature() <= 0;
+	}
+
 	bool IECanHaveTemperature()
 	{
 		return CanHaveTemperature();

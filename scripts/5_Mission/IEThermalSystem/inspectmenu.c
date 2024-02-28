@@ -7,9 +7,9 @@ modded class InspectMenuNew
 		ItemBase item_base = ItemBase.Cast(item);
 		if (item_base != null && item_base.IsTemperatureVisible())
 		{
-			float temperature = Math.Round(item_base.GetTemperature());
+			float temperature = item_base.GetTemperature();
 
-			WidgetTrySetText(root_widget, "ItemTemperatureWidget", temperature.ToString() + " " + "#inv_inspect_celsius", IEGetTemperatureColor(temperature));
+			WidgetTrySetText(root_widget, "ItemTemperatureWidget", Math.Round(temperature).ToString() + " " + "#inv_inspect_celsius", IEGetTemperatureColor(temperature));
 		}
 		else
 		{
@@ -43,12 +43,11 @@ modded class InspectMenuNew
 		else if (item_base && item_base.GetQuantity() > 0 && item_base.IsLiquidContainer())
 		{
 			int liquid_type = item_base.GetLiquidType();
-			int temperature = item_base.GetTemperature();
 			switch (liquid_type)
 			{
 			case LIQUID_WATER:
 			{
-				if (temperature < 0 && GetThermalSystemConfig().water_freezes)
+				if (item_base.IsFrozen())
 					WidgetTrySetText(root_widget, "ItemLiquidTypeWidget", "ICE", IE_COLOR_ICE);
 				else
 					WidgetTrySetText(root_widget, "ItemLiquidTypeWidget", "#inv_inspect_water", Colors.COLOR_LIQUID);
@@ -57,7 +56,7 @@ modded class InspectMenuNew
 
 			case LIQUID_RIVERWATER:
 			{
-				if (temperature < 0)
+				if (item_base.IsFrozen())
 					WidgetTrySetText(root_widget, "ItemLiquidTypeWidget", "ICE", Colors.COLOR_LIQUID);
 				else
 					WidgetTrySetText(root_widget, "ItemLiquidTypeWidget", "#inv_inspect_river_water", Colors.COLOR_LIQUID);

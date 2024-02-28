@@ -3,7 +3,7 @@ modded class ActionDrainLiquid
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
         ItemBase targetItem = ItemBase.Cast(target.GetObject());
-        return targetItem != null && targetItem.IECanHaveTemperature() && targetItem.GetTemperature() < 0 && targetItem.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return targetItem != null && targetItem.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -31,7 +31,7 @@ modded class ActionEmptyBottleBase
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -49,7 +49,7 @@ modded class ActionExtinguishFireplaceByLiquid
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -83,7 +83,7 @@ modded class ActionFillCoolant
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -101,7 +101,7 @@ modded class ActionWaterPlant
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -119,7 +119,7 @@ modded class ActionWaterGardenSlot
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -137,7 +137,7 @@ modded class ActionForceDrink
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -155,7 +155,7 @@ modded class ActionPourLiquid
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)
@@ -182,7 +182,7 @@ modded class ActionWashHandsItemContinuous
 {
     override bool IsBlocked(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        return item.IECanHaveTemperature() && item.GetTemperature() < 0 && item.m_VarLiquidType == LIQUID_WATER && GetThermalSystemConfig().water_freezes;
+        return item.IsFrozen();
     }
 
     override string GetBlockedText(PlayerBase player, ActionTarget target, ItemBase item)

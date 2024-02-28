@@ -5,8 +5,7 @@ class FreezableWater : LiquidDetailsBase
     {
         if (item)
         {
-            int temperature = item.GetTemperature();
-            if (temperature < 0 && GetThermalSystemConfig().water_freezes)
+            if (item.IsFrozen())
             {
                 return "ICE";
             }
@@ -18,8 +17,7 @@ class FreezableWater : LiquidDetailsBase
     {
         if (item)
         {
-            int temperature = item.GetTemperature();
-            if (temperature < 0 && GetThermalSystemConfig().water_freezes)
+            if (item.IsFrozen())
             {
                 return IE_COLOR_ICE;
             }
