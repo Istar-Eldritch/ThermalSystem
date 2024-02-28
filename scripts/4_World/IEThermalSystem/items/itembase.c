@@ -6,7 +6,7 @@ modded class ItemBase
 	float m_Area;
 	float m_Thickness;
 	bool m_AffectsPlayerComfort;
-	float m_CurrentWeight;
+	float m_ItemWeight;
 
 	bool IsTemperatureVisible()
 	{
@@ -71,16 +71,16 @@ modded class ItemBase
 		super.InitItemVariables();
 		m_VarTemperatureMin = -273;
 		m_VarTemperatureMax = 10000;
-		GetHeatCapacity();
-		UpdateNetSyncVariableFloat("m_VarTemperature", GetTemperatureMin(),GetTemperatureMax());
+		m_HeatCapacity = GetHeatCapacity();
+		m_ItemWeight = GetSingleInventoryItemWeightEx();
+		UpdateNetSyncVariableFloat("m_VarTemperature", GetTemperatureMin(), GetTemperatureMax());
 		if (CanHaveTemperature() && GetGame().IsServer())
 		{
 			Mission mission = GetGame().GetMission();
 			if (mission && mission.GetWorldData())
 			{
 				auto temperature = mission.GetWorldData().GetBaseEnvTemperature();
-				m_ThermalEnergy = CalculateThermalEnergy(temperature);
-				CalculateTemperature(m_ThermalEnergy, true);
+				SetTemperature(temperature);
 			}
 			auto config = GetThermalSystemConfig();
 			foreach(auto cls: config.forced_affects_comfort)
@@ -94,27 +94,30 @@ modded class ItemBase
 		}
 	}
 
-	override protected float GetWeightSpecialized(bool forceRecalc = false)
+	override float GetWeightSpecialized(bool forceRecalc = false)
 	{
 		float temp = GetTemperature();
-		float result = super.GetWeightSpecialized();
-		if (GetGame().IsServer() && CanHaveTemperature())
+		float weight = super.GetWeightSpecialized(forceRecalc);
+		float special = GetInventoryAndCargoWeight();//cargo and attachment weight
+		m_ItemWeight = weight - special;
+		SetTemperature(temp);
+		return weight;
+	}
+
+	//Calculates weight of single item without attachments and cargo
+	override float GetSingleInventoryItemWeightEx()
+	{
+		if (m_ItemWeight)
 		{
-			if (Math.AbsFloat(result - m_CurrentWeight) > 10e-3)
-			{
-				m_CurrentWeight = result;
-				SetTemperature(temp);
-			}
+			return m_ItemWeight;
 		}
-			
-		return result;
+		return super.GetSingleInventoryItemWeightEx();
 	}
 	
 	override void SetTemperature(float value, bool allow_client = false)
 	{
 		super.SetTemperature(value, allow_client);
-		m_ThermalEnergy = CalculateThermalEnergy(m_VarTemperature);
-		
+		m_ThermalEnergy = CalculateThermalEnergy(m_VarTemperature, m_ItemWeight);
 	}
 	
 	//----------------------------------------------------------------
@@ -122,7 +125,7 @@ modded class ItemBase
 	{
 		bool success = super.OnStoreLoad(ctx, version);
 		if (success) {
-			m_ThermalEnergy = CalculateThermalEnergy(m_VarTemperature);
+			m_ThermalEnergy = CalculateThermalEnergy(m_VarTemperature, GetSingleInventoryItemWeightEx());
 		}
 		return success;
 	}
@@ -130,12 +133,12 @@ modded class ItemBase
 	void AddThermalEnergy(float energy)
 	{
 		m_ThermalEnergy += energy;
-		CalculateTemperature(m_ThermalEnergy, true);	
+		ReCalculateTemperature(m_ThermalEnergy);	
 	}
 	
-	float CalculateThermalEnergy(float temperature)
+	float CalculateThermalEnergy(float temperature, float weight)
 	{
-		return (GetSingleInventoryItemWeightEx() / 1000) * (temperature + 273) * GetHeatCapacity();
+		return (weight / 1000) * (temperature + 273) * GetHeatCapacity();
 	}
 	
 	float GetThermalEnergy()
@@ -143,14 +146,21 @@ modded class ItemBase
 		return m_ThermalEnergy;
 	}
 
-	float CalculateTemperature(float thermalEnergy, bool applyTemperature = false)
+	// Unfortunatelly this also recalculates the internal weight of the item.
+	// The implementation offsets the mass change and applies the temperature to the item.
+	void ReCalculateTemperature(float thermalEnergy)
 	{
-		float newTemperature = (thermalEnergy / (GetHeatCapacity() * (GetSingleInventoryItemWeightEx() / 1000))) - 273;
-		if (applyTemperature)
+		float thermalEnergyDiff = 0;
+		if (m_WeightDirty)
 		{
-			SetTemperature(newTemperature);
+			float oldTemperature = GetTemperature();
+			float tempThermalEnergy = CalculateThermalEnergy(oldTemperature, m_ItemWeight);
+			thermalEnergyDiff = tempThermalEnergy - m_ThermalEnergy;
 		}
-		return newTemperature;
+		// This recalculates the weight of the item with internal mutability.
+		float weight = GetSingleInventoryItemWeightEx();
+		float newTemperature = ((thermalEnergy + thermalEnergyDiff) / (GetHeatCapacity() * (weight / 1000))) - 273;
+		SetTemperature(newTemperature);
 	}
 
 	float GetHeatCapacity()
