@@ -4,11 +4,12 @@ modded class ItemManager
     {
         if (item_w)
         {
-            if (true /*show_temperature */)
+            if (item)
             {
-                if (item && item.IsInherited(ItemBase))
+				ItemBase itemBase = ItemBase.Cast(item);
+                if (itemBase && itemBase.IsTemperatureVisible())
                 {
-                    float temperature = item.GetTemperature();
+                    float temperature = itemBase.GetTemperature();
                     int color = IEGetTemperatureColor(temperature); // !!!!!
                     if (color)
                     {

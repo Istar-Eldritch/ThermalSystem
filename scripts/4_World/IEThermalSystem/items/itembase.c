@@ -7,6 +7,7 @@ modded class ItemBase
 	float m_Thickness;
 	bool m_AffectsPlayerComfort;
 	float m_ItemWeight;
+	bool m_loggedWarning = false;
 
 	bool IsTemperatureVisible()
 	{
@@ -103,9 +104,12 @@ modded class ItemBase
 	{
 		float temp = GetTemperature();
 		float weight = super.GetWeightSpecialized(forceRecalc);
-		float special = GetInventoryAndCargoWeight();//cargo and attachment weight
-		m_ItemWeight = weight - special;
-		SetTemperature(temp);
+		if (GetGame().IsServer())
+		{
+			float special = GetInventoryAndCargoWeight();//cargo and attachment weight
+			m_ItemWeight = weight - special;
+			SetTemperature(temp);
+		}
 		return weight;
 	}
 
@@ -164,7 +168,23 @@ modded class ItemBase
 		}
 		// This recalculates the weight of the item with internal mutability.
 		float weight = GetSingleInventoryItemWeightEx();
-		float newTemperature = ((thermalEnergy + thermalEnergyDiff) / (GetHeatCapacity() * (weight / 1000))) - 273;
+		if (weight <= 0 && m_loggedWarning)
+		{
+			Print("[ThermalSystem] WARNING! The item " + GetType() + " has weight " + weight + ". This value should be > 0, contact the author of the mod adding this item!");
+			m_loggedWarning = true;
+		}
+		float heatCapacity = GetHeatCapacity();
+		if (heatCapacity <= 0 && m_loggedWarning)
+		{
+			Print("[ThermalSystem] WARNING! The item " + GetType() + " has heat capacity " + heatCapacity + ". This value should be > 0, check your configuration!");
+			m_loggedWarning = true;
+		}
+		float heatWeight = heatCapacity * weight / 1000;
+		if (heatWeight <= 0)
+		{
+			heatWeight = 0.25;
+		}
+		float newTemperature = ((thermalEnergy + thermalEnergyDiff) / heatWeight) - 273;
 		SetTemperature(newTemperature);
 	}
 
