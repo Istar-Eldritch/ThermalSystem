@@ -9,7 +9,7 @@ modded class InspectMenuNew
 		{
 			float temperature = item_base.GetTemperature();
 
-			WidgetTrySetText(root_widget, "ItemTemperatureWidget", Math.Round(temperature).ToString() + " " + "#inv_inspect_celsius", IEGetTemperatureColor(temperature));
+			WidgetTrySetText(root_widget, "ItemTemperatureWidget", Math.Ceil(temperature).ToString() + " " + "#inv_inspect_celsius", IEGetTemperatureColor(temperature));
 		}
 		else
 		{

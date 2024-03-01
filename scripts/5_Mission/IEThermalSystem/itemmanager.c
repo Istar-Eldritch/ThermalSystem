@@ -6,27 +6,34 @@ modded class ItemManager
         {
             if (item)
             {
-				ItemBase itemBase = ItemBase.Cast(item);
-                if (itemBase && itemBase.IsTemperatureVisible())
+                ItemBase itemBase = ItemBase.Cast(item);
+                if (itemBase)
                 {
-                    float temperature = itemBase.GetTemperature();
-                    int color = IEGetTemperatureColor(temperature); // !!!!!
-                    if (color)
+                    string name = item_w.GetName();
+                    name.Replace("Render", "Temperature");
+                    Widget temperature_widget = item_w.GetParent().FindAnyWidget(name);
+                    if (temperature_widget)
                     {
-                        string name = item_w.GetName();
-                        name.Replace("Render", "Temperature");
-                        Widget temperature_widget = item_w.GetParent().FindAnyWidget(name);
-                        if (color != -1)
+                        if (itemBase.IsTemperatureVisible())
                         {
-                            temperature_widget.Show(true);
-                            temperature_widget.SetColor(color);
+                            float temperature = itemBase.GetTemperature();
+                            int color = IEGetTemperatureColor(temperature); // !!!!!
+                            if (color && color != -1)
+                            {
+                                temperature_widget.Show(true);
+                                temperature_widget.SetColor(color);
+                            }
+                            else
+                            {
+                                temperature_widget.Show(false);
+                            }
+
+                            temperature_widget.SetAlpha(0.3);
                         }
                         else
                         {
                             temperature_widget.Show(false);
                         }
-
-                        temperature_widget.SetAlpha(0.3);
                     }
                 }
             }
@@ -37,20 +44,27 @@ modded class ItemManager
     {
         if (item_w)
         {
-			ItemBase itemBase = ItemBase.Cast(item);
-            if (itemBase && itemBase.IsTemperatureVisible())
+            ItemBase itemBase = ItemBase.Cast(item);
+            if (itemBase)
             {
-                float temperature = itemBase.GetTemperature();
-                int color = IEGetTemperatureColor(temperature);
-
-                if (color)
+                Widget color_widget = item_w.FindAnyWidget("Color");
+                if (color_widget)
                 {
-                    Widget color_widget = item_w.FindAnyWidget("Color");
-                    if (color_widget && color != -1)
+                    if (itemBase.IsTemperatureVisible())
                     {
-                        color_widget.SetColor(color);
+                        float temperature = itemBase.GetTemperature();
+                        int color = IEGetTemperatureColor(temperature);
+
+                        if (color && color != -1)
+                        {
+                            color_widget.SetColor(color);
+                        }
+                        else
+                        {
+                            color_widget.SetColor(ColorManager.BASE_COLOR);
+                        }
                     }
-                    else if (color_widget)
+                    else
                     {
                         color_widget.SetColor(ColorManager.BASE_COLOR);
                     }
