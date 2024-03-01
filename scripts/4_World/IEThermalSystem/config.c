@@ -83,6 +83,7 @@ class IE_ThermalSystemConfig
   bool water_freezes = true;
   float water_well_temperature = 5.0;
   bool frozen_edibles_decay = 0;
+  float hot_edibles_hurt = 1;
   float skinning_item_temperature = 30;
   float fishing_item_temperature = 5;
   ref IE_EnvironmentConfig environment = new IE_EnvironmentConfig;

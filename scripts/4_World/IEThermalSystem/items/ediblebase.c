@@ -31,4 +31,33 @@ modded class Edible_Base : ItemBase
 			super.ProcessDecay(delta, hasRootAsPlayer);
 		}
 	}
+
+    override void OnConsume(float amount, PlayerBase consumer)
+    {
+
+        #ifndef NAMALSK_SURVIVAL
+        float hot_edibles_hurt = GetThermalSystemConfig().hot_edibles_hurt;
+        if (CanHaveTemperature() && hot_edibles_hurt) {
+            float dmg = IECalculateDamageFromTemperature();
+            if (dmg)
+            {
+                consumer.IEAddDamage("Health", dmg, true);
+                consumer.IEAddDamage("Shock", dmg * 3);
+            }
+		}
+        #endif
+    }
+
+	float IECalculateDamageFromTemperature()
+	{
+		return IECalculateDamageFromTemperature(GetTemperature());
+	}
+	
+	static float IECalculateDamageFromTemperature(float temperature)
+	{
+        float damage = Math.Pow(1.0257, temperature - 80) - 1;
+        if (damage < 0)
+            damage = 0;
+		return damage;
+	}
 }

@@ -157,6 +157,32 @@ modded class Environment
 		BodyPartHeatProperties(m_HeadParts, GameConstants.ENVIRO_HEATCOMFORT_HEADPARTS_WEIGHT, hcHead, hHead);
 		BodyPartHeatProperties(m_BodyParts, GameConstants.ENVIRO_HEATCOMFORT_BODYPARTS_WEIGHT, hcBody, hBody);
 		BodyPartHeatProperties(m_FeetParts, GameConstants.ENVIRO_HEATCOMFORT_FEETPARTS_WEIGHT, hcFeet, hFeet);
+		
+		
+		#ifdef NAMALSK_SURVIVAL
+		bool pressurizedLEHS = false;
+		if ( m_Player.IsWearingLEHS() )
+		{
+			hcBody = 0.5;
+			hcFeet = 0.5;
+		}
+		if ( m_Player.IsWearingLEHSHelmet() )
+		{
+			dzn_lehs_helmet helmet = dzn_lehs_helmet.Cast( m_Player.FindAttachmentBySlotName( "Headgear" ) );
+			if ( helmet.IsPressurized() )
+			{
+				pressurizedLEHS = true;
+				hcHead = 0.5;
+			}
+			else
+			{
+				if ( helmet.IsVisorUp() )
+					hcHead = 0.15;
+				else
+					hcHead = 0.5;
+			}
+		}
+		#endif
 
 		heatComfortAvg = (hcHead + hcBody + hcFeet) / 3;
 		heatAvg = (hHead + hBody + hFeet) / 3;
@@ -208,6 +234,20 @@ modded class Environment
 				m_HeatComfort = PlayerConstants.THRESHOLD_HEAT_COMFORT_PLUS_WARNING - 0.01;
 			}
 		}
+		
+		#ifdef NAMALSK_SURVIVAL
+		// heat comfort bonus from cold resistance soft skill
+		m_HeatComfort += ( 0.25 ) * m_Player.GetStatColdResistance().Get();
+		// this is here so cold resistance does not push player into yellow heat comfort zone
+		if ( m_HeatComfort >= PlayerConstants.THRESHOLD_HEAT_COMFORT_PLUS_WARNING )
+		{ 
+			m_HeatComfort = PlayerConstants.THRESHOLD_HEAT_COMFORT_PLUS_WARNING - 0.01;
+		}
+		
+		// ultimate comfort override
+		if ( m_ComfortEnvironment || pressurizedLEHS )
+			m_HeatComfort = PlayerConstants.THRESHOLD_HEAT_COMFORT_PLUS_WARNING - 0.01;
+		#endif
 
 		m_HeatComfort = Math.Clamp(m_HeatComfort, m_Player.GetStatHeatComfort().GetMin(), m_Player.GetStatHeatComfort().GetMax());
 		
