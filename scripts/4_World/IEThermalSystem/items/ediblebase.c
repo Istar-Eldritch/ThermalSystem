@@ -34,18 +34,40 @@ modded class Edible_Base : ItemBase
 
     override void OnConsume(float amount, PlayerBase consumer)
     {
-
-        #ifndef NAMALSK_SURVIVAL
-        float hot_edibles_hurt = GetThermalSystemConfig().hot_edibles_hurt;
-        if (CanHaveTemperature() && hot_edibles_hurt) {
-            float dmg = IECalculateDamageFromTemperature();
-            if (dmg)
-            {
-                consumer.IEAddDamage("Health", dmg, true);
-                consumer.IEAddDamage("Shock", dmg * 3);
-            }
+		if (CanHaveTemperature())
+		{
+			auto config = GetThermalSystemConfig();
+			float temperature = GetTemperature();
+			bool temp_in_range = temperature < config.environment.player_comfort_temp_low || temperature > config.environment.player_comfort_temp_hi;
+			if (config.edibles_affect_heat_buffer && temp_in_range)
+			{
+				float baseDiff;
+				if (temperature > config.environment.player_comfort_temp_hi)
+					baseDiff = -(config.environment.player_comfort_temp_hi - config.environment.player_comfort_temp_low) - config.environment.player_comfort_temp_low;
+				if (temperature < config.environment.player_comfort_temp_low)
+					baseDiff = -config.environment.player_comfort_temp_low;
+				
+				float baseTemp = temperature + baseDiff;
+				if (baseTemp > 0)
+					baseTemp = Math.Min(baseTemp, 1);
+				if (baseTemp < 0)
+					baseTemp = Math.Min(baseTemp, -1);
+				
+				float temp_kg = baseTemp * amount / 1000;
+				consumer.GetStatHeatBuffer().Add(temp_kg);
+			}
+			#ifndef NAMALSK_SURVIVAL
+	        float hot_edibles_hurt = config.hot_edibles_hurt;
+	        if (hot_edibles_hurt) {
+	            float dmg = IECalculateDamageFromTemperature();
+	            if (dmg)
+	            {
+	                consumer.IEAddDamage("Health", dmg, true);
+	                consumer.IEAddDamage("Shock", dmg * 3);
+	            }
+			}
+	        #endif
 		}
-        #endif
     }
 
 	float IECalculateDamageFromTemperature()

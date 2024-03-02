@@ -74,7 +74,7 @@ class IE_ThermalSystemConfigV3
   ref array<string> frozen_edibles = IE_DefaultFrozenConsumables();
 }
 
-class IE_ThermalSystemConfig
+class IE_ThermalSystemConfigV4
 {
   int version = 4;
   bool clothing_has_temperature = true;
@@ -83,7 +83,25 @@ class IE_ThermalSystemConfig
   bool water_freezes = true;
   float water_well_temperature = 5.0;
   bool frozen_edibles_decay = 0;
-  float hot_edibles_hurt = 1;
+  float skinning_item_temperature = 30;
+  float fishing_item_temperature = 5;
+  ref IE_EnvironmentConfig environment = new IE_EnvironmentConfig;
+  ref array<ref IE_SpecificHeatCapacity> heat_capacities = IE_DefaultHeatCapacities();
+  ref array<string> frozen_edibles = IE_DefaultFrozenConsumables();
+  ref array<string> forced_affects_comfort = IE_DefaultForcedHeatTransfer();
+}
+
+class IE_ThermalSystemConfig
+{
+  int version = 5;
+  bool clothing_has_temperature = true;
+  bool edibles_have_temperature = true;
+  bool can_consume_frozen_edibles = false;
+  bool water_freezes = true;
+  float water_well_temperature = 5.0;
+  bool frozen_edibles_decay = 0;
+  bool hot_edibles_hurt = 1;
+  bool edibles_affect_heat_buffer = 1;
   float skinning_item_temperature = 30;
   float fishing_item_temperature = 5;
   ref IE_EnvironmentConfig environment = new IE_EnvironmentConfig;
@@ -128,6 +146,7 @@ class IE_ThermalSystemConfigLoader
   static private const string CONFIG_PATH_V1 = DIR_PATH + "\\ThermalSystem.json.v1back";
   static private const string CONFIG_PATH_V2 = DIR_PATH + "\\ThermalSystem.json.v2back";
   static private const string CONFIG_PATH_V3 = DIR_PATH + "\\ThermalSystem.json.v3back";
+  static private const string CONFIG_PATH_V4 = DIR_PATH + "\\ThermalSystem.json.v4back";
 
   ref IE_ThermalSystemConfig config = new IE_ThermalSystemConfig;
 
@@ -142,7 +161,7 @@ class IE_ThermalSystemConfigLoader
     { // If config exist load File
       IE_ThermalSystemVersion v;
       JsonFileLoader<IE_ThermalSystemVersion>.JsonLoadFile(CONFIG_PATH, v);
-      if (v.version == 4)
+      if (v.version == 5)
       {
         JsonFileLoader<IE_ThermalSystemConfig>.JsonLoadFile(CONFIG_PATH, config);
       }
@@ -189,7 +208,25 @@ class IE_ThermalSystemConfigLoader
         config.frozen_edibles = v3.frozen_edibles;
         config.heat_capacities = v3.heat_capacities;
         JsonFileLoader<IE_ThermalSystemConfigV3>.JsonSaveFile(CONFIG_PATH_V3, v3);
-		Save();
+		  Save();
+	  }
+	  else if (v.version == 4)
+	  {
+        IE_ThermalSystemConfigV4 v4;
+        JsonFileLoader<IE_ThermalSystemConfigV4>.JsonLoadFile(CONFIG_PATH, v4);
+        config.clothing_has_temperature = v4.clothing_has_temperature;
+        config.edibles_have_temperature = v4.edibles_have_temperature;
+        config.can_consume_frozen_edibles = v4.can_consume_frozen_edibles;
+	    config.water_well_temperature = v4.water_well_temperature;
+        config.water_freezes = v4.water_freezes;
+		config.skinning_item_temperature = v4.skinning_item_temperature;
+		config.fishing_item_temperature = v4.fishing_item_temperature;
+        config.environment = v4.environment;
+        config.frozen_edibles = v4.frozen_edibles;
+        config.heat_capacities = v4.heat_capacities;
+        config.forced_affects_comfort = v4.forced_affects_comfort;
+        JsonFileLoader<IE_ThermalSystemConfigV4>.JsonSaveFile(CONFIG_PATH_V4, v4);
+		  Save();
 	  }
       else
       {
