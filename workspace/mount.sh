@@ -21,3 +21,6 @@ cmd.exe /c mklink /J "P:\JM\COT" "$(wslpath -w "$SCRIPT_DIR/../../DayZ-Community
 #Liquid Framework
 cmd.exe /c mkdir "P:\rag\rag_stuff"
 cmd.exe /c mklink /J "P:\rag\rag_stuff\rag_liquid_framework" "$(wslpath -w "$SCRIPT_DIR/../../LiquidFramework")"
+
+# Namalsk survival
+cmd.exe /c mklink /J "P:\nst" "$(wslpath -w "$SCRIPT_DIR/../../nst")"

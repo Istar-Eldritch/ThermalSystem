@@ -13,3 +13,7 @@ cmd.exe /c rmdir "P:\JM"
 cmd.exe /c rmdir "P:\rag" /s /q
 
 /mnt/c/Program\ Files\ \(x86\)/Steam/steamapps/common/DayZ\ Tools/Bin/WorkDrive/WorkDrive.exe /Dismount P
+
+# Namalsk Survival
+
+cmd.exe /c rmdir "P:\nst" /s /q
