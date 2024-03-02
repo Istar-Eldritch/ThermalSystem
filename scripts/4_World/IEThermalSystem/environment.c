@@ -189,9 +189,9 @@ modded class Environment
 		
 		// heat buffer
 		float applicableHB = 0.0;
-		if (m_UTSAverageTemperature <= 10e-3)
+		if (m_UTSAverageTemperature <= 1)
 		{
-			applicableHB = m_Player.GetStatHeatBuffer().Get() / GameConstants.ENVIRO_PLAYER_COMFORT_TEMP;
+			applicableHB = m_Player.GetStatHeatBuffer().Get() / 30;
 			if (applicableHB > 0.0)
 			{
 				if (m_HeatBufferTimer > 1.0)
